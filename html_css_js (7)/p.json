@@ -1,0 +1,11 @@
+{
+    "name": "assistente-juridico-desktop",
+      "version": "1.0.0",
+        "main": "server.js",
+          "scripts": {
+              "start": "node server.js",
+                  "build:win": "pkg server.js --target node18-win-x64 --output ../dist-desktop/AssistenteJuridico.exe"
+                    }
+                    }
+                    
+}
