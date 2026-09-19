@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisador de Projetos + Gerador .EXE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 18px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .upload-area {
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .upload-area:hover {
+            background: #e3f2fd;
+            border-color: #764ba2;
+        }
+
+        .upload-area.dragover {
+            background: #e3f2fd;
+            border-color: #764ba2;
+        }
+
+        .upload-area input {
+            display: none;
+        }
+
+        .upload-area p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #1565c0;
+            line-height: 1.5;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #155724;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #856404;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #721c24;
+        }
+
+        .resultado {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border-left: 4px solid #667eea;
+            display: none;
+        }
+
+        .resultado.show {
+            display: block;
+        }
+
+        .resultado h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .resultado pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 12px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .copy-btn {
+            padding: 8px 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+
+        .checklist {
+            margin: 15px 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .checklist-item input {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .checklist-item label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status.ok {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.falta {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-size: 13px;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            font-size: 12px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .modal-content input,
+        .modal-content select,
+        .modal-content textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .modal-content input:focus,
+        .modal-content select:focus,
+        .modal-content textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+        }
+
+        .file-list {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: white;
+            margin: 5px 0;
+            border-radius: 3px;
+            border-left: 3px solid #667eea;
+            font-size: 13px;
+        }
+
+        .file-item .size {
+            color: #999;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📦 Analisador de Projetos + Gerador de Executável</h1>
+            <p>Analisa seus projetos e gera package.json + executável automaticamente</p>
+        </div>
+
+        <div class="content">
+            <!-- UPLOAD -->
+            <div class="card">
+                <h2>📂 1. Envie Seu Projeto</h2>
+                
+                <div class="info-box">
+                    ℹ️ Envie a pasta do seu projeto (ZIP) ou selecione os arquivos principais
+                </div>
+
+                <div class="upload-area" id="uploadArea" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <input type="file" id="fileInput" multiple onchange="handleFileSelect(event)">
+                    <p>📁 Arraste seus arquivos aqui</p>
+                    <p style="font-size: 12px; color: #999;">ou clique para selecionar</p>
+                </div>
+
+                <div id="fileList" class="file-list" style="display: none;"></div>
+
+                <button class="btn" onclick="analisarProjeto()">🔍 Analisar Projeto</button>
+            </div>
+
+            <!-- ANÁLISE -->
+            <div class="card">
+                <h2>📊 2. Análise do Projeto</h2>
+                
+                <div id="analiseResultado" style="display: none;">
+                    <table>
+                        <tr>
+                            <th>Aspecto</th>
+                            <th>Status</th>
+                            <th>Detalhes</th>
+                        </tr>
+                        <tr>
+                            <td>Linguagem Detectada</td>
+                            <td><span class="status ok" id="linguagem">-</span></td>
+                            <td id="linguagem-detalhe">-</td>
+                        </tr>
+                        <tr>
+                            <td>Package.json</td>
+                            <td><span class="status" id="packagejson">-</span></td>
+                            <td id="packagejson-detalhe">-</td>
+                        </tr>
+                        <tr>
+                            <td>Dependências</td>
+                            <td><span class="status" id="deps">-</span></td>
+                            <td id="deps-detalhe">-</td>
+                        </tr>
+                        <tr>
+                            <td>Arquivo Principal</td>
+                            <td><span class="status" id="main">-</span></td>
+                            <td id="main-detalhe">-</td>
+                        </tr>
+                    </table>
+
+                    <div id="avisos" style="margin-top: 15px;"></div>
+                </div>
+
+                <div id="semAnalise" class="info-box">
+                    Envie um projeto para análise
+                </div>
+            </div>
+        </div>
+
+        <!-- GERAÇÃO -->
+        <div class="card">
+            <h2>⚙️ 3. Gerar Arquivos Necessários</h2>
+            
+            <div class="info-box">
+                ℹ️ Selecione o que você quer gerar
+            </div>
+
+            <div class="checklist">
+                <div class="checklist-item">
+                    <input type="checkbox" id="gen-package" checked>
+                    <label for="gen-package"><strong>package.json</strong> - Configuração do projeto</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="gen-config">
+                    <label for="gen-config"><strong>config.json</strong> - Configurações da aplicação</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="gen-readme">
+                    <label for="gen-readme"><strong>README.md</strong> - Documentação</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="gen-build">
+                    <label for="gen-build"><strong>build.json</strong> - Configuração de build</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="gen-requirements">
+                    <label for="gen-requirements"><strong>requirements.txt</strong> - Dependências Python</label>
+                </div>
+            </div>
+
+            <button class="btn" onclick="abrirModalConfig()">⚙️ Configurar e Gerar</button>
+        </div>
+
+        <!-- INSTRUÇÕES -->
+        <div class="card">
+            <h2>📋 4. Próximos Passos para Gerar Executável</h2>
+            
+            <h3 style="margin-top: 15px; color: #333;">Se for Python:</h3>
+            <div style="background: #f8f9fa; padding: 12px; border-radius: 4px; margin: 10px 0; font-family: monospace; font-size: 12px;">
+                pip install pyinstaller<br>
+                pyinstaller --onefile seu_arquivo.py
+            </div>
+
+            <h3 style="margin-top: 15px; color: #333;">Se for Node.js:</h3>
+            <div style="background: #f8f9fa; padding: 12px; border-radius: 4px; margin: 10px 0; font-family: monospace; font-size: 12px;">
+                npm install -g pkg<br>
+                pkg . --targets win
+            </div>
+
+            <h3 style="margin-top: 15px; color: #333;">Com Ollama (IA ajudando):</h3>
+            <div class="info-box">
+                1. Execute: <code>ollama serve</code><br>
+                2. Use a IA para corrigir erros de build<br>
+                3. Gere o executável<br>
+                4. Teste antes de distribuir
+            </div>
+
+            <button class="btn" onclick="gerarComOllama()">🤖 Gerar com Ajuda da IA (Ollama)</button>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 Analisador de Projetos | Recupere seus projetos agora</p>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIGURAÇÃO -->
+    <div id="modalConfig" class="modal">
+        <div class="modal-content">
+            <h2>⚙️ Configurar Projeto</h2>
+            
+            <label><strong>Nome do Projeto:</strong></label>
+            <input type="text" id="nomeProj" placeholder="Ex: meu-app-juridico">
+
+            <label><strong>Versão:</strong></label>
+            <input type="text" id="versaoProj" placeholder="1.0.0" value="1.0.0">
+
+            <label><strong>Descrição:</strong></label>
+            <textarea id="descricaoProj" placeholder="Descrição do seu projeto" rows="3"></textarea>
+
+            <label><strong>Arquivo Principal:</strong></label>
+            <input type="text" id="mainProj" placeholder="Ex: index.js ou main.py">
+
+            <label><strong>Autor:</strong></label>
+            <input type="text" id="autorProj" placeholder="Seu nome">
+
+            <label><strong>Licença:</strong></label>
+            <select id="licencaProj">
+                <option value="MIT">MIT</option>
+                <option value="Apache-2.0">Apache 2.0</option>
+                <option value="GPL-3.0">GPL 3.0</option>
+                <option value="ISC">ISC</option>
+            </select>
+
+            <div class="modal-buttons">
+                <button class="btn" onclick="gerarArquivos()">✅ Gerar Arquivos</button>
+                <button class="btn" style="background: #999;" onclick="fecharModal()">❌ Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let arquivosEnviados = [];
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            document.getElementById('uploadArea').classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            document.getElementById('uploadArea').classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            document.getElementById('uploadArea').classList.remove('dragover');
+            handleFileSelect({ target: { files: e.dataTransfer.files } });
+        }
+
+        function handleFileSelect(e) {
+            arquivosEnviados = Array.from(e.target.files);
+            exibirListaArquivos();
+        }
+
+        function exibirListaArquivos() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            
+            arquivosEnviados.forEach(file => {
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                item.innerHTML = `
+                    <span>📄 ${file.name}</span>
+                    <span class="size">${(file.size / 1024).toFixed(2)} KB</span>
+                `;
+                fileList.appendChild(item);
+            });
+
+            fileList.style.display = 'block';
+        }
+
+        function analisarProjeto() {
+            if (arquivosEnviados.length === 0) {
+                alert('Envie arquivos primeiro!');
+                return;
+            }
+
+            const resultado = document.getElementById('analiseResultado');
+            const semAnalise = document.getElementById('semAnalise');
+
+            // Detectar linguagem
+            let linguagem = 'Desconhecida';
+            let hasPackageJson = false;
+            let hasRequirements = false;
+
+            arquivosEnviados.forEach(file => {
+                if (file.name === 'package.json') hasPackageJson = true;
+                if (file.name === 'requirements.txt') hasRequirements = true;
+                if (file.name.endsWith('.py')) linguagem = 'Python';
+                if (file.name.endsWith('.js')) linguagem = 'JavaScript/Node.js';
+            });
+
+            // Preencher resultado
+            document.getElementById('linguagem').textContent = linguagem;
+            document.getElementById('linguagem').className = 'status ok';
+            document.getElementById('linguagem-detalhe').textContent = `Detectado: ${linguagem}`;
+
+            document.getElementById('packagejson').textContent = hasPackageJson ? 'Existe' : 'Falta';
+            document.getElementById('packagejson').className = hasPackageJson ? 'status ok' : 'status falta';
+            document.getElementById('packagejson-detalhe').textContent = hasPackageJson ? 'Arquivo encontrado' : 'Será gerado';
+
+            document.getElementById('deps').textContent = hasRequirements ? 'Sim' : 'Não';
+            document.getElementById('deps').className = hasRequirements ? 'status ok' : 'status warning';
+            document.getElementById('deps-detalhe').textContent = hasRequirements ? 'requirements.txt encontrado' : 'Será criado automaticamente';
+
+            document.getElementById('main').textContent = 'Detectado';
+            document.getElementById('main').className = 'status ok';
+            document.getElementById('main-detalhe').textContent = `${arquivosEnviados[0].name}`;
+
+            // Avisos
+            let avisos = '';
+            if (!hasPackageJson && linguagem === 'JavaScript/Node.js') {
+                avisos += '<div class="warning-box">⚠️ Sem package.json. Será gerado automaticamente.</div>';
+            }
+            if (!hasRequirements && linguagem === 'Python') {
+                avisos += '<div class="warning-box">⚠️ Sem requirements.txt. Será gerado automaticamente.</div>';
+            }
+            if (linguagem === 'Desconhecida') {
+                avisos += '<div class="error-box">❌ Linguagem não detectada. Verifique os arquivos.</div>';
+            }
+
+            document.getElementById('avisos').innerHTML = avisos;
+            resultado.style.display = 'block';
+            semAnalise.style.display = 'none';
+        }
+
+        function abrirModalConfig() {
+            document.getElementById('modalConfig').classList.add('show');
+        }
+
+        function fecharModal() {
+            document.getElementById('modalConfig').classList.remove('show');
+        }
+
+        function gerarArquivos() {
+            const nome = document.getElementById('nomeProj').value;
+            const versao = document.getElementById('versaoProj').value;
+            const descricao = document.getElementById('descricaoProj').value;
+            const main = document.getElementById('mainProj').value;
+            const autor = document.getElementById('autorProj').value;
+            const licenca = document.getElementById('licencaProj').value;
+
+            // Gerar package.json
+            if (document.getElementById('gen-package').checked) {
+                const packageJson = {
+                    "name": nome,
+                    "version": versao,
+                    "description": descricao,
+                    "main": main,
+                    "author": autor,
+                    "license": licenca,
+                    "scripts": {
+                        "start": `node ${main}`,
+                        "build": "pkg . --targets win",
+                        "dev": `node ${main}`
+                    },
+                    "dependencies": {}
+                };
+                downloadJSON('package.json', packageJson);
+            }
+
+            // Gerar config.json
+            if (document.getElementById('gen-config').checked) {
+                const config = {
+                    "app": {
+                        "name": nome,
+                        "version": versao,
+                        "author": autor
+                    },
+                    "settings": {
+                        "debug": true,
+                        "port": 3000
+                    }
+                };
+                downloadJSON('config.json', config);
+            }
+
+            // Gerar README.md
+            if (document.getElementById('gen-readme').checked) {
+                const readme = `# ${nome}
+
+${descricao}
+
+## Instalação
+
+\`\`\`bash
+npm install
+\`\`\`
+
+## Uso
+
+\`\`\`bash
+npm start
+\`\`\`
+
+## Build
+
+\`\`\`bash
+npm run build
+\`\`\`
+
+## Autor
+
+${autor}
+
+## Licença
+
+${licenca}
+`;
+                downloadText('README.md', readme);
+            }
+
+            // Gerar build.json
+            if (document.getElementById('gen-build').checked) {
+                const build = {
+                    "name": nome,
+                    "version": versao,
+                    "targets": ["win"],
+                    "output": "dist",
+                    "icon": "icon.ico"
+                };
+                downloadJSON('build.json', build);
+            }
+
+            // Gerar requirements.txt
+            if (document.getElementById('gen-requirements').checked) {
+                const requirements = `# Dependências do projeto ${nome}
+# Instale com: pip install -r requirements.txt
+
+pyinstaller>=5.0
+`;
+                downloadText('requirements.txt', requirements);
+            }
+
+            alert('✅ Arquivos gerados! Baixe-os e coloque na pasta do seu projeto.');
+            fecharModal();
+        }
+
+        function downloadJSON(filename, data) {
+            const json = JSON.stringify(data, null, 2);
+            downloadText(filename, json);
+        }
+
+        function downloadText(filename, content) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+        }
+
+        function gerarComOllama() {
+            alert(`
+✅ PRÓXIMOS PASSOS:
+
+1. Coloque os arquivos gerados na pasta do seu projeto
+
+2. Execute no terminal:
+   - Para Python: pyinstaller --onefile seu_arquivo.py
+   - Para Node.js: pkg . --targets win
+
+3. Se der erro, use Ollama para ajudar:
+   - Execute: ollama serve
+   - Descreva o erro para a IA
+   - A IA vai sugerir correções
+
+4. Seu .exe estará em:
+   - Python: dist/seu_arquivo.exe
+   - Node.js: seu_arquivo-win.exe
+
+5. Teste o executável antes de distribuir!
+            `);
+        }
+    </script>
+</body>
+</html>
