@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚙️ Replit Config Manager</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      font-size: 1.1em;
+      opacity: 0.9;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h2 {
+      margin-bottom: 15px;
+      color: #667eea;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-icon {
+      font-size: 1.5em;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9em;
+      transition: all 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #667eea;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+      font-size: 0.85em;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.95em;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: scale(1.05);
+    }
+
+    .btn-secondary {
+      background: #48bb78;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #38a169;
+      transform: scale(1.05);
+    }
+
+    .btn-danger {
+      background: #f56565;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #e53e3e;
+      transform: scale(1.05);
+    }
+
+    .btn-warning {
+      background: #ed8936;
+      color: white;
+    }
+
+    .btn-warning:hover {
+      background: #dd6b20;
+      transform: scale(1.05);
+    }
+
+    .status {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 6px;
+      display: none;
+      font-weight: bold;
+    }
+
+    .status.show {
+      display: block;
+    }
+
+    .status.success {
+      background: #c6f6d5;
+      color: #22543d;
+      border-left: 4px solid #48bb78;
+    }
+
+    .status.error {
+      background: #fed7d7;
+      color: #742a2a;
+      border-left: 4px solid #f56565;
+    }
+
+    .status.loading {
+      background: #bee3f8;
+      color: #2c5282;
+      border-left: 4px solid #667eea;
+    }
+
+    .projects-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .project-btn {
+      padding: 10px;
+      background: #f0f0f0;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .project-btn:hover {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+
+    .project-btn.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+
+    .code-preview {
+      background: #1a202c;
+      color: #48bb78;
+      padding: 15px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85em;
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 10px;
+      border: 2px solid #667eea;
+    }
+
+    .code-line {
+      margin: 3px 0;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-content h2 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .modal-content p {
+      margin-bottom: 20px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .quick-actions {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      margin-bottom: 30px;
+    }
+
+    .quick-actions h2 {
+      margin-bottom: 15px;
+      color: #667eea;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .quick-btn {
+      padding: 15px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .quick-btn:hover {
+      background: #5568d3;
+      transform: scale(1.05);
+    }
+
+    .footer {
+      text-align: center;
+      color: white;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 2px solid rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>⚙️ Replit Config Manager</h1>
+      <p>Gerencie seus arquivos de configuração visualmente</p>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="quick-actions">
+      <h2>⚡ Ações Rápidas</h2>
+      <div class="quick-grid">
+        <button class="quick-btn" onclick="setupAll()">🔧 Setup Completo</button>
+        <button class="quick-btn" onclick="restoreAll()">♻️ Restaurar Tudo</button>
+        <button class="quick-btn" onclick="downloadAll()">📥 Download</button>
+        <button class="quick-btn" onclick="clearCache()">🗑️ Limpar Cache</button>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="grid">
+      <!-- PACKAGE.JSON ROOT -->
+      <div class="card">
+        <h2><span class="card-icon">📦</span> package.json (Root)</h2>
+        <div class="form-group">
+          <label>Nome do Projeto:</label>
+          <input type="text" id="rootName" value="monorepo-root">
+        </div>
+        <div class="form-group">
+          <label>Versão:</label>
+          <input type="text" id="rootVersion" value="1.0.0">
+        </div>
+        <div class="form-group">
+          <label>Descrição:</label>
+          <textarea id="rootDesc">Monorepo com múltiplos projetos</textarea>
+        </div>
+        <div class="button-group">
+          <button class="btn-primary" onclick="savePackageJson('root')">💾 Salvar</button>
+          <button class="btn-secondary" onclick="previewPackageJson('root')">👁️ Visualizar</button>
+        </div>
+        <div class="status"></div>
+      </div>
+
+      <!-- PNPM WORKSPACE -->
+      <div class="card">
+        <h2><span class="card-icon">🔗</span> pnpm-workspace.yaml</h2>
+        <div class="form-group">
+          <label>Packages:</label>
+          <textarea id="workspacePackages">- 'packages/*'
+- 'projects/*'
+- 'projects/*/desktop'</textarea>
+        </div>
+        <div class="form-group">
+          <label>Versão React:</label>
+          <input type="text" id="catalogReact" value="18.2.0">
+        </div>
+        <div class="form-group">
+          <label>Versão TypeScript:</label>
+          <input type="text" id="catalogTS" value="5.3.0">
+        </div>
+        <div class="form-group">
+          <label>Versão Vite:</label>
+          <input type="text" id="catalogVite" value="5.0.0">
+        </div>
+        <div class="button-group">
+          <button class="btn-primary" onclick="savePnpmWorkspace()">💾 Salvar</button>
+          <button class="btn-secondary" onclick="previewPnpmWorkspace()">👁️ Visualizar</button>
+        </div>
+        <div class="status"></div>
+      </div>
+
+      <!-- PROJETOS -->
+      <div class="card">
+        <h2><span class="card-icon">📁</span> Gerenciar Projetos</h2>
+        <div class="form-group">
+          <label>Selecione um projeto:</label>
+          <div class="projects-list">
+            <button class="project-btn active" onclick="selectProject('code-editor')">💻 Code Editor</button>
+            <button class="project-btn" onclick="selectProject('assistente-juridico')">⚖️ Jurídico</button>
+            <button class="project-btn" onclick="selectProject('apk-builder')">📱 APK Builder</button>
+            <button class="project-btn" onclick="selectProject('site-extractor')">🌐 Extractor</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Nome do Projeto:</label>
+          <input type="text" id="projectName" value="@workspace/code-editor">
+        </div>
+        <div class="form-group">
+          <label>Versão:</label>
+          <input type="text" id="projectVersion" value="0.0.0">
+        </div>
+        <div class="form-group">
+          <label>Descrição:</label>
+          <textarea id="projectDesc">SK Code Editor</textarea>
+        </div>
+        <div class="button-group">
+          <button class="btn-primary" onclick="saveProjectPackageJson()">💾 Salvar</button>
+          <button class="btn-secondary" onclick="previewProjectPackageJson()">👁️ Visualizar</button>
+        </div>
+        <div class="status"></div>
+      </div>
+
+      <!-- TURBO.JSON -->
+      <div class="card">
+        <h2><span class="card-icon">⚡</span> turbo.json</h2>
+        <div class="form-group">
+          <label>Configuração:</label>
+          <textarea id="turboConfig">{
+  "extends": ["//"],
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}</textarea>
+        </div>
+        <div class="button-group">
+          <button class="btn-primary" onclick="saveTurboJson()">💾 Salvar</button>
+          <button class="btn-secondary" onclick="previewTurboJson()">👁️ Visualizar</button>
+        </div>
+        <div class="status"></div>
+      </div>
+
+      <!-- .NPMRC -->
+      <div class="card">
+        <h2><span class="card-icon">🔧</span> .npmrc</h2>
+        <div class="form-group">
+          <label>Configuração:</label>
+          <textarea id="npmrcConfig">shamefully-hoist=true
+strict-peer-dependencies=false
+auto-install-peers=true</textarea>
+        </div>
+        <div class="button-group">
+          <button class="btn-primary" onclick="saveNpmrc()">💾 Salvar</button>
+          <button class="btn-secondary" onclick="previewNpmrc()">👁️ Visualizar</button>
+        </div>
+        <div class="status"></div>
+      </div>
+
+      <!-- SCRIPTS -->
+      <div class="card">
+        <h2><span class="card-icon">📜</span> Scripts Shell</h2>
+        <div class="form-group">
+          <label>Selecione um script:</label>
+          <select id="scriptSelect" onchange="loadScript(this.value)">
+            <option value="">-- Selecione --</option>
+            <option value="setup-monorepo">setup-monorepo.sh</option>
+            <option value="restore-packages">restore-packages.sh</option>
+            <option value="protect-packages">protect-packages.sh</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Conteúdo:</label>
+          <textarea id="scriptContent" placeholder="Selecione um script acima"></textarea>
+        </div>
+        <div class="button-group">
+          <button class="btn-primary" onclick="saveScript()">💾 Salvar</button>
+          <button class="btn-secondary" onclick="previewScript()">👁️ Visualizar</button>
+        </div>
+        <div class="status"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>✨ Config Manager - Replit 2026</p>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h2 id="modalTitle">Visualizar</h2>
+      <div class="code-preview" id="codePreview"></div>
+      <div class="modal-buttons">
+        <button class="btn-secondary" onclick="closeModal()">Fechar</button>
+        <button class="btn-primary" onclick="copyPreview()">📋 Copiar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="config-manager.js"></script>
+</body>
+
+</html>
