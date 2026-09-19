@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador Automático de package.json + Workflow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 18px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #1565c0;
+            line-height: 1.5;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #155724;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #856404;
+        }
+
+        .resultado {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            overflow-x: auto;
+            display: none;
+        }
+
+        .resultado.show {
+            display: block;
+        }
+
+        .copy-btn {
+            padding: 8px 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+
+        .download-btn {
+            padding: 8px 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+            margin-left: 5px;
+        }
+
+        .download-btn:hover {
+            background: #218838;
+        }
+
+        .workflow {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .workflow-step:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .workflow-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .workflow-content h3 {
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .workflow-content p {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .workflow-content code {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .checklist {
+            margin: 15px 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .checklist-item input {
+            margin-right: 10px;
+            width: auto;
+            cursor: pointer;
+        }
+
+        .checklist-item label {
+            cursor: pointer;
+            flex: 1;
+            margin: 0;
+            font-weight: normal;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            font-size: 12px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab-btn {
+            padding: 10px 15px;
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📦 Gerador de package.json + Workflow Completo</h1>
+            <p>Crie package.json correto com scripts de build automáticos</p>
+        </div>
+
+        <div class="card">
+            <h2>📋 Informações do Projeto</h2>
+            
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Nome do Projeto:</label>
+                    <input type="text" id="nomeProjeto" placeholder="Ex: meu-app-juridico" value="meu-app">
+                </div>
+
+                <div class="form-group">
+                    <label>Versão:</label>
+                    <input type="text" id="versao" placeholder="1.0.0" value="1.0.0">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Descrição:</label>
+                <textarea id="descricao" placeholder="O que seu app faz?" rows="2">Aplicação jurídica</textarea>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Tipo de Projeto:</label>
+                    <select id="tipoProjeto" onchange="atualizarOpcoes()">
+                        <option value="nodejs">Node.js (JavaScript)</option>
+                        <option value="python">Python</option>
+                        <option value="electron">Electron (Desktop)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Arquivo Principal:</label>
+                    <input type="text" id="mainFile" placeholder="Ex: index.js ou main.py" value="index.js">
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Autor:</label>
+                    <input type="text" id="autor" placeholder="Seu nome">
+                </div>
+
+                <div class="form-group">
+                    <label>Licença:</label>
+                    <select id="licenca">
+                        <option value="MIT">MIT</option>
+                        <option value="Apache-2.0">Apache 2.0</option>
+                        <option value="GPL-3.0">GPL 3.0</option>
+                    </select>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 20px; color: #333;">Dependências (uma por linha):</h3>
+            <textarea id="dependencias" placeholder="express&#10;axios&#10;dotenv" rows="4"></textarea>
+
+            <button class="btn" onclick="gerarPackageJson()">✅ Gerar package.json</button>
+        </div>
+
+        <!-- RESULTADO -->
+        <div class="card">
+            <h2>📄 Resultado</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="mudarTab('json')">📦 package.json</button>
+                <button class="tab-btn" onclick="mudarTab('workflow')">🔄 Workflow</button>
+                <button class="tab-btn" onclick="mudarTab('scripts')">🔧 Scripts</button>
+            </div>
+
+            <!-- JSON -->
+            <div id="tab-json" class="tab-content active">
+                <div id="resultadoJson" class="resultado"></div>
+                <button class="copy-btn" onclick="copiar('resultadoJson')">📋 Copiar</button>
+                <button class="download-btn" onclick="baixarJson()">⬇️ Baixar</button>
+            </div>
+
+            <!-- WORKFLOW -->
+            <div id="tab-workflow" class="tab-content">
+                <div class="workflow" id="workflowContent"></div>
+            </div>
+
+            <!-- SCRIPTS -->
+            <div id="tab-scripts" class="tab-content">
+                <div id="scriptsContent"></div>
+            </div>
+        </div>
+
+        <!-- INSTRUÇÕES -->
+        <div class="card">
+            <h2>📋 Passo a Passo Completo</h2>
+            
+            <div class="workflow">
+                <div class="workflow-step">
+                    <div class="workflow-number">1</div>
+                    <div class="workflow-content">
+                        <h3>Copie o package.json gerado</h3>
+                        <p>Clique em "Copiar" ou "Baixar" e salve na raiz do seu projeto</p>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="workflow-number">2</div>
+                    <div class="workflow-content">
+                        <h3>Instale as dependências</h3>
+                        <p>Abra terminal na pasta do projeto e execute:</p>
+                        <code>npm install</code>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="workflow-number">3</div>
+                    <div class="workflow-content">
+                        <h3>Teste seu app</h3>
+                        <p>Execute:</p>
+                        <code>npm start</code>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="workflow-number">4</div>
+                    <div class="workflow-content">
+                        <h3>Gere o executável</h3>
+                        <p>Execute:</p>
+                        <code>npm run build</code>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="workflow-number">5</div>
+                    <div class="workflow-content">
+                        <h3>Seu .exe estará em:</h3>
+                        <p><code>./dist/seu-app-win.exe</code></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="success-box" style="margin-top: 20px;">
+                ✅ Pronto! Seu executável está pronto para distribuir
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 Gerador de package.json | Recupere seus projetos</p>
+        </div>
+    </div>
+
+    <script>
+        function atualizarOpcoes() {
+            const tipo = document.getElementById('tipoProjeto').value;
+            const mainFile = document.getElementById('mainFile');
+            
+            if (tipo === 'nodejs') {
+                mainFile.value = 'index.js';
+            } else if (tipo === 'python') {
+                mainFile.value = 'main.py';
+            } else if (tipo === 'electron') {
+                mainFile.value = 'main.js';
+            }
+        }
+
+        function gerarPackageJson() {
+            const nome = document.getElementById('nomeProjeto').value || 'meu-app';
+            const versao = document.getElementById('versao').value || '1.0.0';
+            const descricao = document.getElementById('descricao').value || 'Minha aplicação';
+            const mainFile = document.getElementById('mainFile').value || 'index.js';
+            const autor = document.getElementById('autor').value || 'Seu Nome';
+            const licenca = document.getElementById('licenca').value || 'MIT';
+            const tipo = document.getElementById('tipoProjeto').value;
+            const deps = document.getElementById('dependencias').value
+                .split('\n')
+                .filter(d => d.trim())
+                .reduce((acc, dep) => {
+                    acc[dep.trim()] = '^1.0.0';
+                    return acc;
+                }, {});
+
+            let packageJson = {
+                "name": nome,
+                "version": versao,
+                "description": descricao,
+                "main": mainFile,
+                "author": autor,
+                "license": licenca,
+                "scripts": {},
+                "dependencies": deps
+            };
+
+            // Scripts específicos por tipo
+            if (tipo === 'nodejs') {
+                packageJson.scripts = {
+                    "start": `node ${mainFile}`,
+                    "dev": `node ${mainFile}`,
+                    "build": "pkg . --targets win",
+                    "test": "echo \"Error: no test specified\" && exit 1"
+                };
+                packageJson.bin = mainFile;
+            } else if (tipo === 'python') {
+                packageJson.scripts = {
+                    "start": `python ${mainFile}`,
+                    "dev": `python ${mainFile}`,
+                    "build": `pyinstaller --onefile ${mainFile}`
+                };
+            } else if (tipo === 'electron') {
+                packageJson.scripts = {
+                    "start": "electron .",
+                    "dev": "electron .",
+                    "build": "electron-builder --win"
+                };
+                packageJson.dependencies["electron"] = "^latest";
+            }
+
+            // Exibir resultado
+            document.getElementById('resultadoJson').textContent = JSON.stringify(packageJson, null, 2);
+            document.getElementById('resultadoJson').parentElement.classList.add('show');
+
+            // Gerar workflow
+            gerarWorkflow(tipo, nome, mainFile);
+
+            // Gerar scripts
+            gerarScripts(tipo, nome, mainFile);
+        }
+
+        function gerarWorkflow(tipo, nome, mainFile) {
+            let workflow = `
+                <div class="workflow-step">
+                    <div class="workflow-number">1</div>
+                    <div class="workflow-content">
+                        <h3>Copie o package.json</h3>
+                        <p>Cole na raiz do seu projeto</p>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="workflow-number">2</div>
+                    <div class="workflow-content">
+                        <h3>Instale dependências</h3>
+                        <p><code>npm install</code></p>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="workflow-number">3</div>
+                    <div class="workflow-content">
+                        <h3>Teste localmente</h3>
+                        <p><code>npm start</code></p>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="workflow-number">4</div>
+                    <div class="workflow-content">
+                        <h3>Gere executável</h3>
+                        <p><code>npm run build</code></p>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="workflow-number">5</div>
+                    <div class="workflow-content">
+                        <h3>Seu .exe estará em</h3>
+                        <p><code>./dist/${nome}-win.exe</code></p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('workflowContent').innerHTML = workflow;
+        }
+
+        function gerarScripts(tipo, nome, mainFile) {
+            let scripts = '';
+
+            if (tipo === 'nodejs') {
+                scripts = `
+                    <div class="info-box">
+                        <strong>Scripts disponíveis:</strong><br><br>
+                        <code>npm start</code> - Inicia a aplicação<br>
+                        <code>npm run dev</code> - Modo desenvolvimento<br>
+                        <code>npm run build</code> - Gera executável .exe<br>
+                    </div>
+
+                    <div class="warning-box">
+                        ⚠️ Antes de usar npm run build, instale:<br>
+                        <code>npm install -g pkg</code>
+                    </div>
+                `;
+            } else if (tipo === 'python') {
+                scripts = `
+                    <div class="info-box">
+                        <strong>Scripts disponíveis:</strong><br><br>
+                        <code>npm start</code> - Inicia a aplicação Python<br>
+                        <code>npm run dev</code> - Modo desenvolvimento<br>
+                        <code>npm run build</code> - Gera executável .exe<br>
+                    </div>
+
+                    <div class="warning-box">
+                        ⚠️ Antes de usar npm run build, instale:<br>
+                        <code>pip install pyinstaller</code>
+                    </div>
+                `;
+            }
+
+            document.getElementById('scriptsContent').innerHTML = scripts;
+        }
+
+        function mudarTab(tab) {
+            // Remover active de todos
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Adicionar active ao selecionado
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        function copiar(elementId) {
+            const texto = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(texto).then(() => {
+                alert('✅ Copiado para a área de transferência!');
+            });
+        }
+
+        function baixarJson() {
+            const nome = document.getElementById('nomeProjeto').value || 'meu-app';
+            const texto = document.getElementById('resultadoJson').textContent;
+            const blob = new Blob([texto], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'package.json';
+            a.click();
+        }
+    </script>
+</body>
+</html>
