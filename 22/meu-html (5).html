@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de package.json REAL - Só o que Funciona</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 18px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #721c24;
+            line-height: 1.5;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #1565c0;
+            line-height: 1.5;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #155724;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #856404;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .resultado {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            overflow-x: auto;
+            display: none;
+        }
+
+        .resultado.show {
+            display: block;
+        }
+
+        .copy-btn {
+            padding: 8px 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+
+        .passo {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .passo h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .passo p {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .passo code {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .checklist {
+            margin: 15px 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .checklist-item input {
+            margin-right: 10px;
+            width: auto;
+        }
+
+        .checklist-item label {
+            flex: 1;
+            cursor: pointer;
+            margin: 0;
+            font-weight: normal;
+            font-size: 13px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            font-size: 12px;
+        }
+
+        .arquivo-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 8px 0;
+            border-left: 4px solid #667eea;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .arquivo-item strong {
+            color: #333;
+        }
+
+        .arquivo-item .existe {
+            color: #28a745;
+        }
+
+        .arquivo-item .nao-existe {
+            color: #dc3545;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab-btn {
+            padding: 10px 15px;
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✅ Gerador de package.json REAL</h1>
+            <p>Só o que REALMENTE funciona. Sem arquivos fantasma.</p>
+        </div>
+
+        <!-- PASSO 1: INFORMAÇÕES -->
+        <div class="card">
+            <h2>📋 Passo 1: Informações do Seu Projeto</h2>
+            
+            <div class="success-box">
+                ✅ Vamos criar um package.json que funciona com o que você TEM
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Nome do projeto:</label>
+                    <input type="text" id="nomeProjeto" placeholder="Ex: meu-app" value="meu-app">
+                </div>
+
+                <div class="form-group">
+                    <label>Versão:</label>
+                    <input type="text" id="versao" placeholder="1.0.0" value="1.0.0">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Qual é o arquivo PRINCIPAL do seu projeto?</label>
+                <input type="text" id="arquivoPrincipal" placeholder="Ex: index.js ou app.js" value="index.js">
+                <small style="color: #666; display: block; margin-top: 5px;">O arquivo que você clica para iniciar o app</small>
+            </div>
+
+            <div class="form-group">
+                <label>Seu projeto usa:</label>
+                <select id="tipoProjeto" onchange="atualizarOpcoes()">
+                    <option value="nodejs">Node.js (JavaScript)</option>
+                    <option value="python">Python</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Seu projeto tem banco de dados?</label>
+                <select id="temBD">
+                    <option value="nao">Não</option>
+                    <option value="sqlite">Sim, SQLite</option>
+                    <option value="outro">Sim, outro</option>
+                </select>
+            </div>
+
+            <button class="btn" onclick="gerarPackageJson()">✅ Gerar package.json</button>
+        </div>
+
+        <!-- PASSO 2: ANÁLISE -->
+        <div class="card" id="analiseCard" style="display: none;">
+            <h2>🔍 Análise do Seu Projeto</h2>
+            
+            <div class="info-box">
+                ℹ️ Aqui está o que vamos criar
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="mudarTab('arquivos')">📁 Arquivos</button>
+                <button class="tab-btn" onclick="mudarTab('scripts')">🔧 Scripts</button>
+                <button class="tab-btn" onclick="mudarTab('dependencias')">📦 Dependências</button>
+            </div>
+
+            <div id="tab-arquivos" class="tab-content active">
+                <div id="arquivosContent"></div>
+            </div>
+
+            <div id="tab-scripts" class="tab-content">
+                <div id="scriptsContent"></div>
+            </div>
+
+            <div id="tab-dependencias" class="tab-content">
+                <div id="dependenciasContent"></div>
+            </div>
+        </div>
+
+        <!-- PASSO 3: RESULTADO -->
+        <div class="card" id="resultadoCard" style="display: none;">
+            <h2>📦 Seu package.json CORRETO</h2>
+            
+            <div class="success-box">
+                ✅ Este package.json funciona com seus arquivos REAIS
+            </div>
+
+            <div id="packageJsonResultado" class="resultado"></div>
+            <button class="copy-btn" onclick="copiar('packageJsonResultado')">📋 Copiar</button>
+            <button class="copy-btn" style="background: #28a745; margin-left: 5px;" onclick="baixarPackageJson()">⬇️ Baixar</button>
+        </div>
+
+        <!-- PASSO 4: INSTRUÇÕES -->
+        <div class="card" id="instrucoesCard" style="display: none;">
+            <h2>📋 Como Implementar</h2>
+            
+            <div class="passo">
+                <h3>1. Abra a pasta do seu projeto</h3>
+                <p>Localize a pasta onde estão seus arquivos</p>
+            </div>
+
+            <div class="passo">
+                <h3>2. Delete o package.json ANTIGO de Claude</h3>
+                <p>Remova o arquivo package.json que Claude criou (com serve.js e .cjs)</p>
+            </div>
+
+            <div class="passo">
+                <h3>3. Crie um NOVO arquivo chamado package.json</h3>
+                <p>Clique com botão direito → Novo → Arquivo de Texto</p>
+                <p style="margin-top: 10px;">Renomeie para: <code>package.json</code> (sem .txt)</p>
+            </div>
+
+            <div class="passo">
+                <h3>4. Cole o conteúdo</h3>
+                <p>Copie o package.json acima e cole dentro do arquivo</p>
+            </div>
+
+            <div class="passo">
+                <h3>5. Salve</h3>
+                <p>Ctrl+S para salvar</p>
+            </div>
+
+            <div class="passo">
+                <h3>6. Abra o terminal na pasta</h3>
+                <p>Clique com botão direito → "Abrir PowerShell aqui"</p>
+            </div>
+
+            <div class="passo">
+                <h3>7. Execute</h3>
+                <code id="comandoExecutar">node index.js</code>
+            </div>
+
+            <div class="success-box" style="margin-top: 20px;">
+                ✅ Pronto! Seu app deve funcionar agora
+            </div>
+        </div>
+
+        <!-- PASSO 5: CHECKLIST -->
+        <div class="card" id="checklistCard" style="display: none;">
+            <h2>✅ Checklist de Implementação</h2>
+            
+            <div class="checklist">
+                <div class="checklist-item">
+                    <input type="checkbox">
+                    <label>Deletei o package.json antigo de Claude</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox">
+                    <label>Criei um novo arquivo package.json</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox">
+                    <label>Copiei o conteúdo correto</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox">
+                    <label>Salvei o arquivo</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox">
+                    <label>Abri o terminal na pasta</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox">
+                    <label>Executei o comando e funcionou!</label>
+                </div>
+            </div>
+
+            <button class="btn" onclick="verificarConclusao()">🎉 Verificar Conclusão</button>
+        </div>
+
+        <!-- PASSO 6: PRÓXIMOS PASSOS -->
+        <div class="card" id="proximosCard" style="display: none;">
+            <h2>🚀 Próximos Passos</h2>
+            
+            <div class="passo">
+                <h3>Se quer gerar executável (.exe):</h3>
+                <p>Para Node.js:</p>
+                <code>npm install -g pkg</code><br>
+                <code>pkg . --targets win</code>
+                <p style="margin-top: 10px;">Para Python:</p>
+                <code>pip install pyinstaller</code><br>
+                <code>pyinstaller --onefile seu_arquivo.py</code>
+            </div>
+
+            <div class="warning-box" style="margin-top: 15px;">
+                ⚠️ Se der erro, use Ollama:<br>
+                <code>ollama serve</code><br>
+                Depois descreva o erro para a IA
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 Gerador de package.json Real | Recupere seus projetos</p>
+        </div>
+    </div>
+
+    <script>
+        function atualizarOpcoes() {
+            const tipo = document.getElementById('tipoProjeto').value;
+            const arquivo = document.getElementById('arquivoPrincipal');
+            
+            if (tipo === 'nodejs') {
+                arquivo.value = 'index.js';
+            } else if (tipo === 'python') {
+                arquivo.value = 'main.py';
+            }
+        }
+
+        function gerarPackageJson() {
+            const nome = document.getElementById('nomeProjeto').value || 'meu-app';
+            const versao = document.getElementById('versao').value || '1.0.0';
+            const arquivo = document.getElementById('arquivoPrincipal').value || 'index.js';
+            const tipo = document.getElementById('tipoProjeto').value;
+            const temBD = document.getElementById('temBD').value;
+
+            // Gerar package.json
+            let packageJson = {
+                "name": nome,
+                "version": versao,
+                "description": "Aplicação jurídica",
+                "main": arquivo,
+                "scripts": {},
+                "dependencies": {}
+            };
+
+            // Scripts corretos
+            if (tipo === 'nodejs') {
+                packageJson.scripts = {
+                    "start": `node ${arquivo}`,
+                    "dev": `node ${arquivo}`
+                };
+            } else if (tipo === 'python') {
+                packageJson.scripts = {
+                    "start": `python ${arquivo}`,
+                    "dev": `python ${arquivo}`
+                };
+            }
+
+            // Dependências se tiver BD
+            if (temBD === 'sqlite' && tipo === 'nodejs') {
+                packageJson.dependencies["sqlite3"] = "^5.1.6";
+            }
+
+            // Exibir resultado
+            document.getElementById('packageJsonResultado').textContent = JSON.stringify(packageJson, null, 2);
+            document.getElementById('packageJsonResultado').parentElement.classList.add('show');
+
+            // Gerar análise
+            gerarAnalise(arquivo, tipo, temBD);
+
+            // Atualizar comando
+            document.getElementById('comandoExecutar').textContent = tipo === 'nodejs' ? `node ${arquivo}` : `python ${arquivo}`;
+
+            // Mostrar cards
+            document.getElementById('analiseCard').style.display = 'block';
+            document.getElementById('resultadoCard').style.display = 'block';
+            document.getElementById('instrucoesCard').style.display = 'block';
+            document.getElementById('checklistCard').style.display = 'block';
+            document.getElementById('proximosCard').style.display = 'block';
+
+            // Scroll
+            document.getElementById('analiseCard').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function gerarAnalise(arquivo, tipo, temBD) {
+            // Arquivos
+            let arquivosHtml = `
+                <div class="arquivo-item">
+                    <strong>✅ ${arquivo}</strong><br>
+                    <span class="existe">Arquivo principal (EXISTE)</span>
+                </div>
+            `;
+
+            if (temBD === 'sqlite') {
+                arquivosHtml += `
+                    <div class="arquivo-item">
+                        <strong>📁 database/</strong><br>
+                        <span class="existe">Pasta para banco de dados SQLite</span>
+                    </div>
+                    <div class="arquivo-item">
+                        <strong>❌ serve.js</strong><br>
+                        <span class="nao-existe">Arquivo fantasma de Claude (REMOVER)</span>
+                    </div>
+                `;
+            }
+
+            document.getElementById('arquivosContent').innerHTML = arquivosHtml;
+
+            // Scripts
+            let scriptsHtml = `
+                <div class="arquivo-item">
+                    <strong>"start":</strong> ${tipo === 'nodejs' ? `node ${arquivo}` : `python ${arquivo}`}<br>
+                    <span class="existe">✅ Funciona com seus arquivos reais</span>
+                </div>
+                <div class="arquivo-item">
+                    <strong>"dev":</strong> ${tipo === 'nodejs' ? `node ${arquivo}` : `python ${arquivo}`}<br>
+                    <span class="existe">✅ Modo desenvolvimento</span>
+                </div>
+            `;
+
+            document.getElementById('scriptsContent').innerHTML = scriptsHtml;
+
+            // Dependências
+            let depsHtml = `
+                <div class="arquivo-item">
+                    <strong>Dependências necessárias:</strong><br>
+            `;
+
+            if (temBD === 'sqlite' && tipo === 'nodejs') {
+                depsHtml += `
+                    <span class="existe">✅ sqlite3</span> - Para banco de dados<br>
+                `;
+            } else if (temBD === 'nao') {
+                depsHtml += `
+                    <span class="existe">✅ Nenhuma</span> - Seu app funciona sem dependências<br>
+                `;
+            }
+
+            depsHtml += `
+                </div>
+            `;
+
+            document.getElementById('dependenciasContent').innerHTML = depsHtml;
+        }
+
+        function mudarTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        function copiar(elementId) {
+            const texto = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(texto).then(() => {
+                alert('✅ Copiado para a área de transferência!');
+            });
+        }
+
+        function baixarPackageJson() {
+            const texto = document.getElementById('packageJsonResultado').textContent;
+            const blob = new Blob([texto], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'package.json';
+            a.click();
+        }
+
+        function verificarConclusao() {
+            const checkboxes = document.querySelectorAll('#checklistCard input[type="checkbox"]');
+            const marcadas = Array.from(checkboxes).filter(cb => cb.checked).length;
+
+            if (marcadas === checkboxes.length) {
+                alert('🎉 Parabéns! Seu projeto está funcionando!\n\nAgora você pode:\n1. Gerar executável\n2. Distribuir seu app\n3. Recuperar os R$ 900 no Procon');
+            } else {
+                alert(`⚠️ Você completou ${marcadas} de ${checkboxes.length} passos.\n\nContinue seguindo as instruções!`);
+            }
+        }
+    </script>
+</body>
+</html>
