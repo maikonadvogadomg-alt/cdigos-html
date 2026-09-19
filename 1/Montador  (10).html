@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#667eea">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>🚀</text></svg>">
+  <link rel="stylesheet" href="setup-dashboard.css">
+  <title>🚀 Setup Dashboard</title>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🚀 Setup Dashboard</h1>
+      <p>Configure todos os seus projetos com um clique</p>
+    </div>
+
+    <div class="quick-actions">
+      <h2>⚡ Ações Rápidas</h2>
+      <div class="quick-grid">
+        <button class="quick-btn" onclick="setupAll()">🔧 Setup Completo</button>
+        <button class="quick-btn" onclick="buildAll()">🔨 Build Todos</button>
+        <button class="quick-btn" onclick="clearTerminal()">🗑️ Limpar</button>
+        <button class="quick-btn" onclick="copyAllCommands()">📋 Copiar Todos</button>
+      </div>
+    </div>
+
+    <div class="projects-grid" id="projectsGrid"></div>
+
+    <div class="commands-section">
+      <h2>📋 Comandos para Copiar</h2>
+      <div id="commandsList"></div>
+      <div class="terminal" id="terminal"></div>
+    </div>
+
+    <div class="footer">
+      <p>✨ Dashboard de Setup - Monorepo 2026</p>
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h2 id="modalTitle">Confirmação</h2>
+      <p id="modalText"></p>
+      <div class="modal-buttons">
+        <button class="btn btn-danger" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="confirmAction()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('setup-sw.js').then(reg => {
+        console.log('✅ Service Worker registrado');
+      }).catch(err => {
+        console.log('❌ SW error:', err);
+      });
+    }
+  </script>
+  <script src="setup-dashboard.js"></script>
+</body>
+</html>
