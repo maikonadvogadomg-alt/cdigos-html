@@ -1,0 +1,261 @@
+#!/bin/bash
+
+# ===== CORES =====
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# ===== FUNÇÃO: Criar estrutura desktop =====
+create_desktop_structure() {
+  local PROJECT_DIR="$1"
+  local PROJECT_NAME="$2"
+  local PORT="$3"
+
+  echo -e "${BLUE}📁 Criando estrutura desktop para ${PROJECT_NAME}...${NC}"
+
+  # Criar pasta desktop
+  mkdir -p "$PROJECT_DIR/desktop/app"
+
+  # ===== Criar server.js =====
+  cat > "$PROJECT_DIR/desktop/server.js" << 'EOF'
+#!/usr/bin/env node
+"use strict";
+const http = require("http");
+const fs = require("fs");
+const path = require("path");
+const os = require("os");
+const { exec } = require("child_process");
+
+const PORT = process.env.PORT || 18633;
+const APP_NAME = process.env.APP_NAME || "App";
+const OPEN_BROWSER = process.env.OPEN_BROWSER !== "false";
+
+const MIME = {
+  ".html": "text/html; charset=utf-8",
+  ".js": "application/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".json": "application/json",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".ico": "image/x-icon",
+  ".woff2": "font/woff2",
+  ".woff": "font/woff",
+  ".ttf": "font/ttf",
+  ".mp3": "audio/mpeg",
+  ".mp4": "video/mp4",
+  ".webm": "video/webm",
+};
+
+function resolveAsset(rel) {
+  const candidates = [
+    path.join(__dirname, "app", rel),
+    path.join(__dirname, "..", "dist", rel),
+  ];
+  
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+  
+  return null;
+}
+
+const server = http.createServer((req, res) => {
+  try {
+    let url = (req.url || "/").split("?")[0];
+    
+    if (url === "/" || url === "") {
+      url = "/index.html";
+    }
+
+    const rel = url.replace(/^\//, "");
+    const filePath = resolveAsset(rel);
+
+    if (filePath && fs.existsSync(filePath)) {
+      const ext = path.extname(filePath).toLowerCase();
+      const mime = MIME[ext] || "application/octet-stream";
+      const data = fs.readFileSync(filePath);
+      
+      res.writeHead(200, {
+        "Content-Type": mime,
+        "Cache-Control": "no-cache",
+        "Content-Length": data.length,
+      });
+      res.end(data);
+    } else {
+      const indexPath = resolveAsset("index.html");
+      
+      if (indexPath && fs.existsSync(indexPath)) {
+        const data = fs.readFileSync(indexPath);
+        res.writeHead(200, {
+          "Content-Type": "text/html; charset=utf-8",
+          "Cache-Control": "no-cache",
+        });
+        res.end(data);
+      } else {
+        res.writeHead(404);
+        res.end("index.html não encontrado");
+      }
+    }
+  } catch (err) {
+    console.error("Erro:", err);
+    res.writeHead(500);
+    res.end("Erro interno");
+  }
+});
+
+server.listen(PORT, "127.0.0.1", () => {
+  const url = `http://127.0.0.1:${PORT}`;
+  
+  console.log("\n");
+  console.log("  ╔════════════════════════════════╗");
+  console.log(`  ║  ${APP_NAME.padEnd(30)}║`);
+  console.log("  ╚════════════════════════════════╝");
+  console.log(`  Rodando em: ${url}`);
+  console.log("  Pressione Ctrl+C para fechar.\n");
+
+  if (OPEN_BROWSER) {
+    let cmd;
+    switch (os.platform()) {
+      case "win32":
+        cmd = `start "" "${url}"`;
+        break;
+      case "darwin":
+        cmd = `open "${url}"`;
+        break;
+      default:
+        cmd = `xdg-open "${url}"`;
+    }
+
+    exec(cmd, (err) => {
+      if (err) {
+        console.log(`  Abra manualmente: ${url}\n`);
+      }
+    });
+  }
+});
+
+server.on("error", (err) => {
+  if (err.code === "EADDRINUSE") {
+    console.error(`\n  ❌ Porta ${PORT} já está em uso.\n`);
+  } else {
+    console.error("\n  ❌ Erro:", err.message, "\n");
+  }
+  process.exit(1);
+});
+EOF
+
+  chmod +x "$PROJECT_DIR/desktop/server.js"
+
+  # ===== Criar package.json =====
+  cat > "$PROJECT_DIR/desktop/package.json" << EOF
+{
+  "name": "$(basename $PROJECT_DIR)-desktop",
+  "version": "1.0.0",
+  "description": "${PROJECT_NAME} — versão desktop",
+  "main": "server.js",
+  "bin": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build:win": "pkg server.js --target node18-win-x64 --output ../dist-desktop/$(basename $PROJECT_DIR).exe",
+    "build:linux": "pkg server.js --target node18-linux-x64 --output ../dist-desktop/$(basename $PROJECT_DIR)-linux",
+    "build:mac": "pkg server.js --target node18-macos-x64 --output ../dist-desktop/$(basename $PROJECT_DIR)-mac",
+    "build:all": "npm run build:win && npm run build:linux && npm run build:mac"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "pkg": "^5.14.4"
+  },
+  "pkg": {
+    "targets": ["node18-win-x64"],
+    "outputPath": "../dist-desktop"
+  }
+}
+EOF
+
+  echo -e "${GREEN}✅ Estrutura criada em ${PROJECT_DIR}/desktop${NC}"
+}
+
+# ===== FUNÇÃO: Configurar projeto =====
+setup_project() {
+  local PROJECT_DIR="$1"
+  local PROJECT_NAME="$2"
+  local PORT="$3"
+
+  echo -e "${YELLOW}🔧 Configurando ${PROJECT_NAME}...${NC}\n"
+
+  # Entrar na pasta
+  cd "$PROJECT_DIR" || exit
+
+  # Limpar
+  echo -e "${BLUE}🧹 Limpando...${NC}"
+  rm -rf node_modules package-lock.json dist dist-apk dist-desktop
+
+  # Instalar
+  echo -e "${BLUE}📦 Instalando dependências...${NC}"
+  npm install --legacy-peer-deps 2>/dev/null || npm install
+
+  # Build
+  echo -e "${BLUE}🔨 Compilando...${NC}"
+  npm run build 2>/dev/null || npm run build:web
+
+  # Criar estrutura desktop
+  create_desktop_structure "$PROJECT_DIR" "$PROJECT_NAME" "$PORT"
+
+  # Copiar assets
+  echo -e "${BLUE}📋 Copiando assets...${NC}"
+  mkdir -p desktop/app
+  if [ -d "dist" ]; then
+    cp -r dist/* desktop/app/ 2>/dev/null
+  fi
+
+  # Instalar dependências do desktop
+  echo -e "${BLUE}📦 Instalando dependências do desktop...${NC}"
+  cd desktop
+  npm install --legacy-peer-deps 2>/dev/null || npm install
+
+  echo -e "${GREEN}✅ ${PROJECT_NAME} pronto!${NC}\n"
+
+  # Voltar
+  cd ..
+}
+
+# ===== MAIN =====
+echo -e "${BLUE}╔════════════════════════════════╗${NC}"
+echo -e "${BLUE}║  Setup Completo - Todos Projetos${NC}"
+echo -e "${BLUE}╚════════════════════════════════╝${NC}\n"
+
+# Array de projetos
+declare -a PROJECTS=(
+  "code-editor|SK Code Editor|18633"
+  "assistente-juridico|Assistente Jurídico|18634"
+  "apk-builder|APK Builder|18635"
+  "site-extractor|Site Extractor|18636"
+)
+
+# Processar cada projeto
+for PROJECT in "${PROJECTS[@]}"; do
+  IFS='|' read -r DIR NAME PORT <<< "$PROJECT"
+  
+  if [ -d "$DIR" ]; then
+    setup_project "$DIR" "$NAME" "$PORT"
+  else
+    echo -e "${RED}⚠️  Projeto $DIR não encontrado${NC}\n"
+  fi
+done
+
+echo -e "${GREEN}╔════════════════════════════════╗${NC}"
+echo -e "${GREEN}║  ✅ Todos os projetos prontos!${NC}"
+echo -e "${GREEN}╚════════════════════════════════╝${NC}\n"
+
+echo -e "${YELLOW}Para rodar cada projeto:${NC}\n"
+echo "  cd code-editor/desktop && PORT=18633 APP_NAME='SK Code Editor' npm start"
+echo "  cd assistente-juridico/desktop && PORT=18634 APP_NAME='Assistente Jurídico' npm start"
+echo "  cd apk-builder/desktop && PORT=18635 APP_NAME='APK Builder' npm start"
+echo "  cd site-extractor/desktop && PORT=18636 APP_NAME='Site Extractor' npm start"
+echo ""
