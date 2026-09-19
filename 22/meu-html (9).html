@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📖 Gerador de Histórias com Voz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: rgba(20, 20, 40, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #667eea;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            text-align: center;
+            grid-column: 1 / -1;
+            font-size: 2em;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            color: #00d4ff;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="file"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            background: rgba(102, 126, 234, 0.1);
+            color: #fff;
+            font-family: inherit;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        input[type="text"]::placeholder,
+        textarea::placeholder {
+            color: #888;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            font-size: 0.95em;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            background: #764ba2;
+            color: white;
+            margin-right: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #6a3f8f;
+        }
+
+        .btn-success {
+            background: #51cf66;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #40c057;
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ee5a52;
+        }
+
+        .preview {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 2px dashed #667eea;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+        }
+
+        .preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+        }
+
+        .preview video {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+        }
+
+        .timeline {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .timeline-item {
+            background: rgba(102, 126, 234, 0.2);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            border-radius: 5px;
+            color: #00d4ff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timeline-item button {
+            padding: 6px 12px;
+            font-size: 0.8em;
+            width: auto;
+        }
+
+        .slider-group {
+            margin-bottom: 15px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            color: #00d4ff;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 5px;
+            background: #667eea;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #00d4ff;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #00d4ff;
+            cursor: pointer;
+            border: none;
+        }
+
+        .status {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 4px solid #00d4ff;
+            padding: 15px;
+            border-radius: 8px;
+            color: #00d4ff;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #00d4ff);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .tab-btn {
+            padding: 10px 15px;
+            background: transparent;
+            color: #888;
+            border: none;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #00d4ff;
+            border-bottom-color: #00d4ff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 4px solid #667eea;
+            padding: 12px;
+            border-radius: 8px;
+            color: #aaa;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📖✨ Gerador de Histórias com Sua Voz</h1>
+
+    <div class="container">
+        <!-- PAINEL DE ENTRADA -->
+        <div class="panel">
+            <h2>📝 Seu Roteiro</h2>
+
+            <div class="form-group">
+                <label>📌 Título da História</label>
+                <input type="text" id="title" placeholder="Ex: Minha aventura no Rio de Janeiro...">
+            </div>
+
+            <div class="form-group">
+                <label>📖 Conte sua história aqui</label>
+                <textarea id="roteiro" placeholder="Escreva o roteiro aqui. Dica: Separe partes diferentes com quebras de linha para melhor sincronização..."></textarea>
+            </div>
+
+            <div class="info-box">
+                💡 <strong>Dica:</strong> Escreva como se estivesse falando. Quanto mais natural, melhor fica!
+            </div>
+
+            <div class="form-group">
+                <label>🎤 Velocidade de Fala</label>
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span>Velocidade</span>
+                        <span id="speedValue">1.0x</span>
+                    </div>
+                    <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>🎵 Tom de Voz</label>
+                <select id="voiceTone">
+                    <option value="neutral">Neutro</option>
+                    <option value="happy">Alegre</option>
+                    <option value="serious">Sério</option>
+                    <option value="dramatic">Dramático</option>
+                    <option value="mysterious">Misterioso</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>🖼️ Adicionar Imagens/Fotos</label>
+                <input type="file" id="imageUpload" accept="image/*" multiple>
+                <small style="color: #888;">Você pode adicionar várias imagens</small>
+            </div>
+
+            <button class="btn-primary" onclick="generateStory()">🚀 GERAR HISTÓRIA</button>
+        </div>
+
+        <!-- PAINEL DE VISUALIZAÇÃO -->
+        <div class="panel">
+            <h2>👁️ Visualização</h2>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('preview')">Preview</button>
+                <button class="tab-btn" onclick="switchTab('timeline')">Timeline</button>
+                <button class="tab-btn" onclick="switchTab('export')">Exportar</button>
+            </div>
+
+            <!-- PREVIEW -->
+            <div id="preview" class="tab-content active">
+                <div class="preview" id="previewArea">
+                    <span>Sua história aparecerá aqui...</span>
+                </div>
+                <button class="btn-success" onclick="playPreview()">▶️ OUVIR PREVIEW</button>
+            </div>
+
+            <!-- TIMELINE -->
+            <div id="timeline" class="tab-content">
+                <div class="timeline" id="timelineArea">
+                    <p style="color: #888; text-align: center;">Timeline será gerada aqui...</p>
+                </div>
+            </div>
+
+            <!-- EXPORTAR -->
+            <div id="export" class="tab-content">
+                <div class="status">
+                    ✨ Opções de Exportação
+                </div>
+
+                <div class="form-group">
+                    <label>📏 Tamanho do Vídeo</label>
+                    <select id="videoSize">
+                        <option value="instagram">📱 Instagram (1080x1920)</option>
+                        <option value="tiktok">🎬 TikTok (1080x1920)</option>
+                        <option value="youtube">📺 YouTube (1920x1080)</option>
+                        <option value="square">⬜ Quadrado (1080x1080)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>🎨 Tema/Fundo</label>
+                    <select id="theme">
+                        <option value="dark">🌙 Escuro</option>
+                        <option value="light">☀️ Claro</option>
+                        <option value="gradient">🌈 Gradiente</option>
+                        <option value="blur">🌫️ Desfocado</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>🎵 Música de Fundo</label>
+                    <select id="bgMusic">
+                        <option value="none">Nenhuma</option>
+                        <option value="ambient">Ambiente</option>
+                        <option value="cinematic">Cinemático</option>
+                        <option value="upbeat">Animado</option>
+                    </select>
+                </div>
+
+                <button class="btn-success" onclick="exportVideo()">📥 EXPORTAR VÍDEO</button>
+                <button class="btn-secondary" onclick="downloadAudio()">🎤 BAIXAR ÁUDIO</button>
+            </div>
+
+            <div class="status" id="status" style="margin-top: 15px; display: none;">
+                ⏳ Processando...
+            </div>
+
+            <div class="progress-bar" id="progressBar" style="display: none;">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStory = null;
+        let uploadedImages = [];
+        let audioContext;
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        });
+
+        // TABS
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // UPLOAD DE IMAGENS
+        document.getElementById('imageUpload').addEventListener('change', (e) => {
+            uploadedImages = [];
+            Array.from(e.target.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    uploadedImages.push(event.target.result);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // ATUALIZAR VELOCIDADE
+        document.getElementById('speed').addEventListener('input', (e) => {
+            document.getElementById('speedValue').textContent = e.target.value + 'x';
+        });
+
+        // GERAR HISTÓRIA
+        function generateStory() {
+            const title = document.getElementById('title').value;
+            const roteiro = document.getElementById('roteiro').value;
+            const speed = document.getElementById('speed').value;
+            const tone = document.getElementById('voiceTone').value;
+
+            if (!title || !roteiro) {
+                alert('⚠️ Preencha o título e o roteiro!');
+                return;
+            }
+
+            showStatus('✨ Gerando sua história...');
+            showProgress();
+
+            // Simular processamento
+            setTimeout(() => {
+                currentStory = {
+                    title,
+                    roteiro,
+                    speed,
+                    tone,
+                    images: uploadedImages
+                };
+
+                generatePreview();
+                generateTimeline();
+                showStatus('✅ História gerada com sucesso!');
+                hideProgress();
+            }, 1500);
+        }
+
+        // GERAR PREVIEW
+        function generatePreview() {
+            const previewArea = document.getElementById('previewArea');
+            const title = document.getElementById('title').value;
+            const roteiro = document.getElementById('roteiro').value;
+
+            let html = `
+                <div style="text-align: center; color: #00d4ff;">
+                    <h3 style="margin-bottom: 15px; font-size: 1.5em;">${title}</h3>
+                    <p style="margin-bottom: 20px; line-height: 1.6; color: #aaa;">${roteiro.substring(0, 200)}...</p>
+            `;
+
+            if (uploadedImages.length > 0) {
+                html += `<img src="${uploadedImages[0]}" style="max-width: 100%; max-height: 300px; border-radius: 8px; margin-top: 15px;">`;
+            } else {
+                html += `<div style="background: rgba(102, 126, 234, 0.2); padding: 40px; border-radius: 8px; margin-top: 15px;">📸 Nenhuma imagem adicionada</div>`;
+            }
+
+            html += `</div>`;
+            previewArea.innerHTML = html;
+        }
+
+        // GERAR TIMELINE
+        function generateTimeline() {
+            const roteiro = document.getElementById('roteiro').value;
+            const partes = roteiro.split('\n').filter(p => p.trim());
+            const timelineArea = document.getElementById('timelineArea');
+
+            let html = '';
+            let tempoAtual = 0;
+
+            partes.forEach((parte, index) => {
+                const duracao = Math.ceil(parte.length / 15); // ~15 caracteres por segundo
+                tempoAtual += duracao;
+
+                html += `
+                    <div class="timeline-item">
+                        <div>
+                            <strong>Parte ${index + 1}</strong><br>
+                            <small>${parte.substring(0, 50)}...</small><br>
+                            <small style="color: #888;">⏱️ ${duracao}s (Total: ${tempoAtual}s)</small>
+                        </div>
+                        <button class="btn-secondary" onclick="editPart(${index})">✏️ Editar</button>
+                    </div>
+                `;
+            });
+
+            timelineArea.innerHTML = html;
+        }
+
+        // EDITAR PARTE
+        function editPart(index) {
+            alert(`Editando parte ${index + 1}. Funcionalidade em desenvolvimento!`);
+        }
+
+        // REPRODUZIR PREVIEW
+        function playPreview() {
+            if (!currentStory) {
+                alert('⚠️ Gere uma história primeiro!');
+                return;
+            }
+
+            const roteiro = currentStory.roteiro;
+            const speed = parseFloat(currentStory.speed);
+
+            // Usar Web Speech API para ler o texto
+            const utterance = new SpeechSynthesisUtterance(roteiro);
+            utterance.lang = 'pt-BR';
+            utterance.rate = speed;
+            utterance.pitch = currentStory.tone === 'happy' ? 1.5 : currentStory.tone === 'serious' ? 0.8 : 1;
+
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+
+            showStatus('🔊 Reproduzindo preview...');
+        }
+
+        // EXPORTAR VÍDEO
+        function exportVideo() {
+            if (!currentStory) {
+                alert('⚠️ Gere uma história primeiro!');
+                return;
+            }
+
+            showStatus('🎬 Gerando vídeo...');
+            showProgress();
+
+            const videoSize = document.getElementById('videoSize').value;
+            const theme = document.getElementById('theme').value;
+
+            setTimeout(() => {
+                showStatus('✅ Vídeo gerado! (Simulado - em produção real seria exportado)');
+                hideProgress();
+                alert(`📹 Vídeo pronto!\n\nTamanho: ${videoSize}\nTema: ${theme}\n\nEm breve você poderá baixar!`);
+            }, 2000);
+        }
+
+        // BAIXAR ÁUDIO
+        function downloadAudio() {
+            if (!currentStory) {
+                alert('⚠️ Gere uma história primeiro!');
+                return;
+            }
+
+            showStatus('🎤 Preparando áudio...');
+            
+            setTimeout(() => {
+                showStatus('✅ Áudio pronto para download!');
+                alert('🎧 Seu áudio está pronto!\n\nEm breve você poderá baixar o arquivo MP3');
+            }, 1000);
+        }
+
+        // FUNÇÕES AUXILIARES
+        function showStatus(message) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.style.display = 'block';
+        }
+
+        function showProgress() {
+            document.getElementById('progressBar').style.display = 'block';
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 30;
+                if (progress > 100) progress = 100;
+                document.getElementById('progressFill').style.width = progress + '%';
+                if (progress === 100) clearInterval(interval);
+            }, 300);
+        }
+
+        function hideProgress() {
+            document.getElementById('progressBar').style.display = 'none';
+            document.getElementById('progressFill').style.width = '0%';
+        }
+    </script>
+</body>
+</html>
