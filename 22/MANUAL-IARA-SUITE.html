@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Manual Iara Suite v2.0 — Maikon Caldeira OAB/MG 183712</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--primary:#58a6ff;--green:#3fb950;--yellow:#d29922;--red:#f85149;--purple:#bc8cff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.7;font-size:14px}
+.page{max-width:860px;margin:0 auto;padding:32px 20px}
+h1{font-size:28px;font-weight:800;color:var(--text);margin-bottom:6px}
+h2{font-size:20px;font-weight:700;color:var(--primary);margin:36px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+h3{font-size:15px;font-weight:700;color:var(--text);margin:22px 0 8px}
+h4{font-size:13px;font-weight:600;color:var(--muted);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.05em}
+p{margin-bottom:10px;color:var(--text)}
+ul,ol{padding-left:22px;margin-bottom:12px}
+li{margin-bottom:4px}
+code{background:var(--bg3);color:#79c0ff;padding:2px 6px;border-radius:4px;font-family:'Courier New',monospace;font-size:12px}
+pre{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;margin:12px 0}
+pre code{background:none;padding:0;color:#79c0ff;font-size:12px;line-height:1.6}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;margin:12px 0}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.b-blue{background:rgba(88,166,255,.15);color:var(--primary)}
+.b-green{background:rgba(63,185,80,.15);color:var(--green)}
+.b-yellow{background:rgba(210,153,34,.15);color:var(--yellow)}
+.b-purple{background:rgba(188,140,255,.15);color:var(--purple)}
+.b-red{background:rgba(248,81,73,.15);color:var(--red)}
+.alert{padding:10px 14px;border-radius:8px;margin:10px 0;font-size:13px}
+.a-info{background:rgba(88,166,255,.1);border:1px solid rgba(88,166,255,.3);color:#79c0ff}
+.a-warn{background:rgba(210,153,34,.1);border:1px solid rgba(210,153,34,.3);color:var(--yellow)}
+.a-ok{background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.3);color:var(--green)}
+.a-tip{background:rgba(188,140,255,.1);border:1px solid rgba(188,140,255,.3);color:var(--purple)}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+th{background:var(--bg3);color:var(--muted);font-weight:600;text-align:left;padding:8px 12px;border:1px solid var(--border)}
+td{padding:8px 12px;border:1px solid var(--border);vertical-align:top}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin:20px 0}
+.toc h3{margin-top:0;color:var(--primary)}
+.toc ol{padding-left:20px}
+.toc li{margin-bottom:6px}
+.toc a{color:var(--muted);text-decoration:none;font-size:13px}
+.toc a:hover{color:var(--primary)}
+.toc .sub{padding-left:16px;margin-top:4px}
+.toc .sub a{font-size:12px}
+.cover{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--border);border-radius:12px;padding:32px;margin-bottom:24px;text-align:center}
+.cover h1{font-size:36px;background:linear-gradient(90deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cover .sub{font-size:15px;color:var(--muted);margin-top:8px}
+.cover .author{margin-top:16px;padding:10px 20px;background:var(--bg);border-radius:8px;display:inline-block;font-size:13px;color:var(--text)}
+.step{display:flex;gap:12px;margin:8px 0;align-items:flex-start}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--primary);color:#000;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-body{flex:1}
+.divider{border:none;border-top:1px solid var(--border);margin:24px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+a{color:var(--primary)}
+kbd{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:11px;font-family:'Courier New',monospace}
+.provider-row td:first-child{font-family:'Courier New',monospace;font-size:12px}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- CAPA -->
+<div class="cover">
+  <div style="font-size:48px">⚡</div>
+  <h1>IARA SUITE v2.0</h1>
+  <div class="sub">Manual Completo — Code Editor · Terminal Linux · APK Builder · Site Extractor</div>
+  <div class="author">⚖️ Advogado Maikon Caldeira — OAB/MG 183712 · 2025</div>
+  <div style="margin-top:12px">
+    <span class="badge b-green">Standalone</span>
+    &nbsp;<span class="badge b-blue">Sem Replit</span>
+    &nbsp;<span class="badge b-purple">IA Direta</span>
+    &nbsp;<span class="badge b-yellow">Terminal Linux</span>
+  </div>
+</div>
+
+<!-- ÍNDICE -->
+<div class="toc">
+  <h3>📋 Índice</h3>
+  <ol>
+    <li><a href="#visao">Visão Geral</a></li>
+    <li><a href="#requisitos">Requisitos e Instalação</a></li>
+    <li><a href="#editor">Code Editor</a>
+      <div class="sub">
+        <a href="#editor-arquivos">Gerenciar Arquivos</a> ·
+        <a href="#editor-zip">Importar/Exportar ZIP</a> ·
+        <a href="#editor-ia">IA Integrada</a>
+      </div>
+    </li>
+    <li><a href="#ia">Sistema de IA — Auto-detecção de Chaves</a>
+      <div class="sub">
+        <a href="#ia-providers">Provedores suportados</a> ·
+        <a href="#ia-gratis">IAs gratuitas</a> ·
+        <a href="#ia-config">Configuração</a> ·
+        <a href="#ia-rotas">Rotas diretas (sem proxy)</a>
+      </div>
+    </li>
+    <li><a href="#terminal">Terminal Linux Online</a>
+      <div class="sub">
+        <a href="#term-webvm">WebVM (recomendado)</a> ·
+        <a href="#term-outros">Outras opções</a>
+      </div>
+    </li>
+    <li><a href="#apk">APK Builder</a>
+      <div class="sub">
+        <a href="#apk-capacitor">Via Capacitor + Android Studio</a> ·
+        <a href="#apk-actions">Via GitHub Actions</a> ·
+        <a href="#apk-electron">Via Electron (PC)</a> ·
+        <a href="#apk-orient">Orientação de tela</a> ·
+        <a href="#apk-erro">Solução de erros</a>
+      </div>
+    </li>
+    <li><a href="#extrator">Site Extractor</a>
+      <div class="sub">
+        <a href="#ext-proxy">Proxies públicos</a> ·
+        <a href="#ext-scripts">Scripts de Cálculo</a>
+      </div>
+    </li>
+    <li><a href="#atalhos">Atalhos de Teclado</a></li>
+    <li><a href="#faq">FAQ — Perguntas Frequentes</a></li>
+    <li><a href="#juridico">Cálculos Jurídicos Integrados</a></li>
+  </ol>
+</div>
+
+<hr class="divider"/>
+
+<!-- 1. VISÃO GERAL -->
+<h2 id="visao">1. Visão Geral</h2>
+<p>O <strong>Iara Suite v2.0</strong> é uma suite de ferramentas para desenvolvimento e produtividade jurídica que funciona 100% no navegador, sem dependência de servidores externos, sem instalar nada e sem qualquer vínculo com o servidor Replit.</p>
+
+<div class="grid2">
+  <div class="card">
+    <h3>💻 Code Editor</h3>
+    <p>Editor de código com sistema de arquivos virtual, importação de ZIPs, e assistente de IA (Jasmim) conectado diretamente a qualquer provedor via chave de API.</p>
+  </div>
+  <div class="card">
+    <h3>🖥 Terminal Linux</h3>
+    <p>4 opções de terminal Linux online gratuito. O WebVM roda Alpine Linux completo via WebAssembly no navegador — sem servidor, sem conta, sem instalação.</p>
+  </div>
+  <div class="card">
+    <h3>📦 APK Builder</h3>
+    <p>Converte qualquer site/app em ZIP de projeto Android (Capacitor) ou executável PC (Electron). Inclui GitHub Actions para compilar o APK automaticamente na nuvem.</p>
+  </div>
+  <div class="card">
+    <h3>🔍 Site Extractor</h3>
+    <p>Extrai scripts de cálculo de sites jurídicos via proxy público. Identifica automaticamente fórmulas, AJAX e lógica previdenciária.</p>
+  </div>
+</div>
+
+<div class="alert a-ok">
+  <strong>✅ Sem dependências externas:</strong> nenhuma chamada ao servidor Replit em nenhuma hipótese. A IA chama diretamente o servidor do provedor (OpenAI, Anthropic, Google, Groq etc). O terminal usa WebAssembly local.
+</div>
+
+<hr class="divider"/>
+
+<!-- 2. REQUISITOS -->
+<h2 id="requisitos">2. Requisitos e Instalação</h2>
+
+<h3>Para usar o Iara Suite</h3>
+<ul>
+  <li>Qualquer navegador moderno: Chrome 90+, Firefox 88+, Edge 90+, Safari 15+</li>
+  <li>Conexão com internet <em>apenas</em> para: IA, Terminal, Site Extractor</li>
+  <li>O Code Editor e APK Builder funcionam <strong>offline</strong></li>
+</ul>
+
+<h3>Para compilar o APK (depois de gerar o ZIP)</h3>
+<div class="grid2">
+  <div class="card">
+    <h4>Via Android Studio</h4>
+    <ul>
+      <li>Android Studio Hedgehog+</li>
+      <li>Java 17+ (JDK)</li>
+      <li>Android SDK 34</li>
+      <li>Node.js 18+</li>
+      <li>~8 GB de espaço em disco</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>Via GitHub Actions (recomendado)</h4>
+    <ul>
+      <li>Conta gratuita no GitHub</li>
+      <li>Repositório público (grátis)</li>
+      <li>Push do código → APK gerado em ~10 min</li>
+      <li>Sem instalar Android Studio!</li>
+    </ul>
+  </div>
+</div>
+
+<h3>Como abrir</h3>
+<div class="step"><div class="step-num">1</div><div class="step-body">Extraia o arquivo <code>iara-suite.zip</code></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-body">Windows: clique duas vezes em <code>iniciar.bat</code></div></div>
+<div class="step"><div class="step-num">2b</div><div class="step-body">Mac/Linux: execute <code>./iniciar.sh</code> no terminal</div></div>
+<div class="step"><div class="step-num">2c</div><div class="step-body">Alternativa: arraste <code>index.html</code> para qualquer navegador</div></div>
+
+<hr class="divider"/>
+
+<!-- 3. CODE EDITOR -->
+<h2 id="editor">3. Code Editor</h2>
+<p>O editor possui um sistema de arquivos virtual salvo no <code>localStorage</code> do navegador. Os arquivos persistem entre sessões.</p>
+
+<h3 id="editor-arquivos">Gerenciar Arquivos</h3>
+<ul>
+  <li>Digite o nome no campo superior da barra lateral e pressione <kbd>Enter</kbd> ou clique <strong>+</strong></li>
+  <li>Clique em qualquer arquivo para abrir</li>
+  <li>Clique no <strong>✕</strong> vermelho para deletar (confirme o popup)</li>
+  <li><kbd>Ctrl</kbd>+<kbd>S</kbd> salva o arquivo atual</li>
+  <li><kbd>Tab</kbd> insere 2 espaços (não perde o foco)</li>
+</ul>
+
+<h3 id="editor-zip">Importar / Exportar ZIP</h3>
+<ul>
+  <li><strong>📥 ZIP</strong> (barra lateral) — importa todos os arquivos de um ZIP</li>
+  <li><strong>📤 ZIP</strong> (barra lateral) — exporta todos os arquivos em um ZIP</li>
+  <li>Compatível com ZIPs de projetos React, Vue, Next.js, HTML puro etc.</li>
+</ul>
+
+<h3 id="editor-ia">IA Integrada — Jasmim</h3>
+<p>Clique em <strong>🤖 IA</strong> na barra do editor para abrir o chat.</p>
+<ul>
+  <li><strong>Enviar ↵</strong> ou <kbd>Ctrl</kbd>+<kbd>Enter</kbd> envia a mensagem</li>
+  <li><strong>📋+código</strong> — envia a mensagem com o conteúdo do arquivo atual</li>
+  <li><strong>⬅ código</strong> — insere o último bloco de código da IA no editor</li>
+  <li><strong>🗑</strong> — limpa o histórico do chat</li>
+</ul>
+<div class="alert a-tip">
+  <strong>💡 Dica:</strong> A IA Jasmim é especializada em cálculos previdenciários, INSS, RGPS e desenvolvimento jurídico. Peça: "Calcule a aposentadoria por tempo de contribuição com fator previdenciário" ou "Gere uma calculadora de atualização monetária com IPCA".
+</div>
+
+<hr class="divider"/>
+
+<!-- 4. IA -->
+<h2 id="ia">4. Sistema de IA — Auto-detecção de Chaves</h2>
+<p>Todas as chamadas de IA são feitas <strong>diretamente do seu navegador para o servidor do provedor</strong>. Nenhum proxy Replit é usado em nenhuma hipótese.</p>
+
+<h3 id="ia-providers">Provedores Suportados</h3>
+<table>
+  <thead>
+    <tr><th>Prefixo da Chave</th><th>Provedor</th><th>Modelo Padrão</th><th>URL Base</th><th>Custo</th></tr>
+  </thead>
+  <tbody class="provider-row">
+    <tr><td>gsk_...</td><td>Groq</td><td>llama-3.3-70b-versatile</td><td>api.groq.com/openai/v1</td><td><span class="badge b-green">GRÁTIS</span></td></tr>
+    <tr><td>AIza... / ya29.</td><td>Google Gemini</td><td>gemini-2.0-flash</td><td>generativelanguage.googleapis.com</td><td><span class="badge b-green">GRÁTIS</span></td></tr>
+    <tr><td>sk-ant-...</td><td>Anthropic Claude</td><td>claude-haiku-4-20250514</td><td>api.anthropic.com/v1</td><td><span class="badge b-yellow">Pago</span></td></tr>
+    <tr><td>sk-or-...</td><td>OpenRouter</td><td>anthropic/claude-haiku</td><td>openrouter.ai/api/v1</td><td><span class="badge b-yellow">Variado</span></td></tr>
+    <tr><td>sk-...</td><td>OpenAI</td><td>gpt-4o-mini</td><td>api.openai.com/v1</td><td><span class="badge b-yellow">Pago</span></td></tr>
+    <tr><td>xai-...</td><td>xAI Grok</td><td>grok-3-mini</td><td>api.x.ai/v1</td><td><span class="badge b-yellow">Pago</span></td></tr>
+    <tr><td>ap-...</td><td>Mistral AI</td><td>mistral-large-latest</td><td>api.mistral.ai/v1</td><td><span class="badge b-yellow">Pago</span></td></tr>
+    <tr><td>ds-...</td><td>DeepSeek</td><td>deepseek-chat</td><td>api.deepseek.com/v1</td><td><span class="badge b-yellow">Baixo</span></td></tr>
+    <tr><td>Qualquer outro</td><td>Custom (OpenAI-compat)</td><td>Configure</td><td>Informe a URL base</td><td>—</td></tr>
+  </tbody>
+</table>
+
+<h3 id="ia-gratis">Como obter IAs GRÁTIS</h3>
+<div class="grid2">
+  <div class="card">
+    <h4>🟢 Groq (recomendado)</h4>
+    <ol>
+      <li>Acesse <a href="https://console.groq.com" target="_blank">console.groq.com</a></li>
+      <li>Crie conta gratuita</li>
+      <li>API Keys → Create API Key</li>
+      <li>Copie a chave (começa com <code>gsk_</code>)</li>
+      <li>Cole no Slot 1 → Ativar → Salvar</li>
+    </ol>
+    <p style="font-size:12px;color:var(--muted);margin-top:8px">Limite: 30 req/min grátis. Llama 3.3 70B é excelente.</p>
+  </div>
+  <div class="card">
+    <h4>🔵 Google Gemini (gratuito)</h4>
+    <ol>
+      <li>Acesse <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a></li>
+      <li>Get API Key</li>
+      <li>Copie a chave (começa com <code>AIza</code>)</li>
+      <li>Cole no Slot 2 → Ativar → Salvar</li>
+    </ol>
+    <p style="font-size:12px;color:var(--muted);margin-top:8px">Gemini 2.0 Flash — rápido e preciso. 15 req/min grátis.</p>
+  </div>
+</div>
+
+<h3 id="ia-config">Configuração das Chaves</h3>
+<div class="step"><div class="step-num">1</div><div class="step-body">Clique em <strong>🔑 Chaves API</strong> (canto superior direito)</div></div>
+<div class="step"><div class="step-num">2</div><div class="step-body">Cole a chave no campo "Chave API" de qualquer slot</div></div>
+<div class="step"><div class="step-num">3</div><div class="step-body">O provedor é detectado automaticamente — aparece em verde</div></div>
+<div class="step"><div class="step-num">4</div><div class="step-body">Clique <strong>Ativar</strong> no slot desejado</div></div>
+<div class="step"><div class="step-num">5</div><div class="step-body">Clique <strong>✅ Salvar e Fechar</strong></div></div>
+
+<h3 id="ia-rotas">Rotas Diretas — Sem Replit</h3>
+<table>
+  <thead><tr><th>Provedor</th><th>Endpoint Direto</th><th>Headers Especiais</th></tr></thead>
+  <tbody>
+    <tr><td>OpenAI / Groq / OpenRouter / xAI / Mistral / DeepSeek</td><td><code>POST /chat/completions</code></td><td><code>Authorization: Bearer {key}</code></td></tr>
+    <tr><td>Anthropic</td><td><code>POST https://api.anthropic.com/v1/messages</code></td><td><code>x-api-key: {key}</code> + <code>anthropic-dangerous-direct-browser-access: true</code></td></tr>
+    <tr><td>Google Gemini</td><td><code>POST .../models/{model}:generateContent?key={key}</code></td><td>Sem authorization header</td></tr>
+  </tbody>
+</table>
+
+<hr class="divider"/>
+
+<!-- 5. TERMINAL -->
+<h2 id="terminal">5. Terminal Linux Online</h2>
+<p>O Iara Suite inclui 4 opções de terminal Linux gratuito, acessíveis na aba <strong>🖥 Terminal Linux</strong>. Nenhum usa o servidor Replit.</p>
+
+<h3 id="term-webvm">WebVM (Recomendado)</h3>
+<div class="alert a-ok">
+  <strong>WebVM</strong> — Alpine Linux completo via <strong>WebAssembly + CheerpX</strong>. Roda 100% no seu navegador, sem servidor externo. Suporta: bash, python3, gcc, node, npm, vim, curl e muito mais.
+</div>
+<ul>
+  <li>URL: <a href="https://webvm.io" target="_blank">webvm.io</a></li>
+  <li>Sistema: Alpine Linux 3.19</li>
+  <li>Sem conta, sem login, sem limite de tempo</li>
+  <li>Pode instalar pacotes: <code>apk add python3 nodejs npm</code></li>
+  <li>Acesso à internet dentro do VM via Tailscale (opcional)</li>
+</ul>
+
+<h3 id="term-outros">Outras Opções</h3>
+<table>
+  <thead><tr><th>Nome</th><th>Tipo</th><th>Pontos Positivos</th><th>Limitações</th></tr></thead>
+  <tbody>
+    <tr><td>Copy.sh v86</td><td>Emulador x86</td><td>Linux 2.6 completo, offline</td><td>Mais lento que WebVM</td></tr>
+    <tr><td>CoCalc</td><td>Nuvem</td><td>Python/Jupyter/LaTeX</td><td>Requer conta (grátis)</td></tr>
+    <tr><td>Repl.it Bash</td><td>Nuvem</td><td>Rápido, fácil</td><td>Requer conta</td></tr>
+  </tbody>
+</table>
+
+<div class="alert a-warn">
+  <strong>Nota:</strong> O terminal externo abre em um iframe. Alguns sites bloqueiam iframe por política X-Frame-Options. Se não carregar, clique o link para abrir em nova aba.
+</div>
+
+<hr class="divider"/>
+
+<!-- 6. APK BUILDER -->
+<h2 id="apk">6. APK Builder</h2>
+<p>O APK Builder converte qualquer site/app web em um projeto Android (APK) ou executável de PC (Electron), gerado 100% no navegador sem servidor.</p>
+
+<div class="alert a-info">
+  <strong>Importante:</strong> O APK Builder gera o <em>projeto de código-fonte</em> compactado em ZIP. Para compilar o APK (.apk), você precisa do Android Studio ou do GitHub Actions (opção mais fácil).
+</div>
+
+<h3 id="apk-capacitor">Opção A — Capacitor + Android Studio</h3>
+<div class="step"><div class="step-num">1</div><div class="step-body">Na aba <strong>APK Builder</strong>, arraste o ZIP do seu site (ou clique para selecionar)</div></div>
+<div class="step"><div class="step-num">2</div><div class="step-body">Preencha <strong>Nome do App</strong> e <strong>Package ID</strong> (ex: <code>br.adv.maikoncaldeira.app</code>)</div></div>
+<div class="step"><div class="step-num">3</div><div class="step-body">Configure Versão, Cor, Orientação e Android mínimo</div></div>
+<div class="step"><div class="step-num">4</div><div class="step-body">Selecione <strong>📱 Capacitor + Android Studio</strong></div></div>
+<div class="step"><div class="step-num">5</div><div class="step-body">Clique <strong>⚡ Gerar ZIP do Projeto</strong> — faz o download automaticamente</div></div>
+<div class="step"><div class="step-num">6</div><div class="step-body">Extraia o ZIP e execute no terminal:</div></div>
+<pre><code>npm install
+npx cap copy android</code></pre>
+<div class="step"><div class="step-num">7</div><div class="step-body">Abra o <strong>Android Studio</strong> → <em>File → Open</em> → selecione a pasta <code>android/</code></div></div>
+<div class="step"><div class="step-num">8</div><div class="step-body">Aguarde o Gradle sync (~5 min na primeira vez)</div></div>
+<div class="step"><div class="step-num">9</div><div class="step-body"><em>Build → Build Bundle(s)/APK(s) → Build APK(s)</em></div></div>
+<div class="step"><div class="step-num">10</div><div class="step-body">APK gerado em: <code>android/app/build/outputs/apk/debug/app-debug.apk</code></div></div>
+
+<h3 id="apk-actions">Opção B — GitHub Actions (sem instalar nada)</h3>
+<p>Esta é a opção mais fácil. O APK é compilado automaticamente no GitHub quando você faz push.</p>
+<div class="step"><div class="step-num">1</div><div class="step-body">Siga os passos 1 a 5 da Opção A para gerar o ZIP</div></div>
+<div class="step"><div class="step-num">2</div><div class="step-body">Extraia o ZIP e inicialize o repositório Git:</div></div>
+<pre><code>git init
+git add .
+git commit -m "Initial commit"</code></pre>
+<div class="step"><div class="step-num">3</div><div class="step-body">Crie um repositório no <a href="https://github.com" target="_blank">GitHub.com</a> (pode ser público, gratuito)</div></div>
+<div class="step"><div class="step-num">4</div><div class="step-body">Faça o push:</div></div>
+<pre><code>git remote add origin https://github.com/SEU-USUARIO/SEU-REPO.git
+git branch -M main
+git push -u origin main</code></pre>
+<div class="step"><div class="step-num">5</div><div class="step-body">O GitHub Actions inicia automaticamente. Aguarde ~10-15 minutos</div></div>
+<div class="step"><div class="step-num">6</div><div class="step-body">Acesse a aba <strong>Releases</strong> do repositório → clique no arquivo <code>.apk</code> para baixar</div></div>
+
+<div class="alert a-tip">
+  <strong>💡 Dica:</strong> Toda vez que fizer push (com atualizações), o APK é recompilado automaticamente. O workflow já está configurado no arquivo <code>.github/workflows/build-apk.yml</code>.
+</div>
+
+<h3>Instalar o APK no celular</h3>
+<ol>
+  <li>Transfira o <code>.apk</code> para o celular (cabo USB, WhatsApp, Google Drive)</li>
+  <li>No celular: <em>Configurações → Segurança → Fontes desconhecidas</em> (ou similar)</li>
+  <li>Abra o arquivo <code>.apk</code> e toque em <em>Instalar</em></li>
+</ol>
+
+<h3 id="apk-electron">Opção C — Electron (Executável de PC)</h3>
+<div class="step"><div class="step-num">1</div><div class="step-body">Selecione <strong>🖥 Electron (PC: Win/Mac/Linux)</strong></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-body">Gere e extraia o ZIP</div></div>
+<div class="step"><div class="step-num">3</div><div class="step-body">Instale Node.js e execute:</div></div>
+<pre><code>npm install
+npm start          # Abre o app
+npm run dist       # Gera .exe (Windows), .dmg (Mac), .AppImage (Linux)</code></pre>
+<div class="step"><div class="step-num">4</div><div class="step-body">O executável é gerado na pasta <code>dist-electron/</code></div></div>
+
+<h3 id="apk-orient">Orientação de Tela</h3>
+<table>
+  <thead><tr><th>Opção</th><th>AndroidManifest.xml</th><th>Uso recomendado</th></tr></thead>
+  <tbody>
+    <tr><td>Retrato (portrait)</td><td><code>portrait</code></td><td>Apps de leitura, formulários</td></tr>
+    <tr><td>Paisagem (landscape)</td><td><code>landscape</code></td><td>Players, editores</td></tr>
+    <tr><td>Ambas</td><td><code>unspecified</code></td><td>Iara Suite, apps gerais</td></tr>
+  </tbody>
+</table>
+
+<h3 id="apk-erro">Solução de Erros Comuns</h3>
+<table>
+  <thead><tr><th>Erro</th><th>Causa</th><th>Solução</th></tr></thead>
+  <tbody>
+    <tr><td><code>Gradle sync failed</code></td><td>SDK não instalado</td><td>Android Studio → SDK Manager → instale Android 34</td></tr>
+    <tr><td><code>JAVA_HOME not set</code></td><td>Java não configurado</td><td>Instale JDK 17 e configure JAVA_HOME</td></tr>
+    <tr><td><code>capacitor not found</code></td><td>npm install pulado</td><td>Execute <code>npm install</code> antes de <code>npx cap copy</code></td></tr>
+    <tr><td>APK instala mas tela branca</td><td>index.html na pasta errada</td><td>Certifique que o index.html está na raiz do ZIP enviado</td></tr>
+    <tr><td>GitHub Actions falhou</td><td>Veja o log em Actions</td><td>Clique no workflow falhado → expanda o passo com erro</td></tr>
+  </tbody>
+</table>
+
+<hr class="divider"/>
+
+<!-- 7. EXTRATOR -->
+<h2 id="extrator">7. Site Extractor</h2>
+<p>O Site Extractor acessa páginas web via proxies públicos gratuitos para contornar restrições de CORS, permitindo analisar scripts de cálculo de sites jurídicos.</p>
+
+<h3 id="ext-proxy">Proxies Públicos Utilizados</h3>
+<ol>
+  <li><strong>allorigins.win</strong> — proxy primário, retorna JSON com HTML</li>
+  <li><strong>corsproxy.io</strong> — fallback automático se o primeiro falhar</li>
+  <li><strong>codetabs.com/v1/proxy</strong> — terceiro fallback</li>
+</ol>
+
+<div class="alert a-warn">
+  Sites com Cloudflare Enterprise ou WAF avançado podem bloquear proxies. Nesse caso, experimente acessar o site e inspecionar manualmente o HTML via F12 → Fontes.
+</div>
+
+<h3 id="ext-scripts">Scripts de Cálculo Detectados</h3>
+<p>O extrator identifica automaticamente scripts com:</p>
+<ul>
+  <li><span class="badge b-yellow">⚖️ Cálculo</span> — palavras como: salário, benefício, INSS, previdenciário, aposentadoria, pensão, correção monetária, coeficiente, RMC</li>
+  <li><span class="badge b-purple">📐 Fórmula</span> — Math., parseFloat, toFixed, function calc, operações matemáticas</li>
+  <li><span class="badge b-green">🌐 AJAX/Fetch</span> — fetch(), XMLHttpRequest, $.ajax(), axios</li>
+</ul>
+
+<h3>Funcionalidades</h3>
+<ul>
+  <li><strong>⬇ .js</strong> — baixa todos os scripts inline em um arquivo JavaScript</li>
+  <li><strong>⬇ HTML</strong> — baixa o HTML completo da página</li>
+  <li><strong>👁 Ver</strong> — abre o código do script em modal com opção de copiar</li>
+  <li><strong>🔗</strong> — abre o arquivo externo em nova aba</li>
+  <li>Profundidade 2 — extrai também subpáginas (até 5 links)</li>
+</ul>
+
+<hr class="divider"/>
+
+<!-- 8. ATALHOS -->
+<h2 id="atalhos">8. Atalhos de Teclado</h2>
+<table>
+  <thead><tr><th>Atalho</th><th>Ação</th><th>Onde</th></tr></thead>
+  <tbody>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td>Salvar arquivo atual</td><td>Editor</td></tr>
+    <tr><td><kbd>Tab</kbd></td><td>Inserir 2 espaços</td><td>Editor</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>Enter</kbd></td><td>Enviar mensagem para IA</td><td>Chat IA</td></tr>
+    <tr><td><kbd>Enter</kbd></td><td>Criar arquivo (no campo do nome)</td><td>Sidebar</td></tr>
+    <tr><td><kbd>Esc</kbd></td><td>Fechar modal</td><td>Modais</td></tr>
+  </tbody>
+</table>
+
+<hr class="divider"/>
+
+<!-- 9. FAQ -->
+<h2 id="faq">9. FAQ — Perguntas Frequentes</h2>
+
+<h3>O app usa o servidor do Replit de alguma forma?</h3>
+<p><strong>Não.</strong> Nenhuma chamada vai ao Replit. A IA chama diretamente o servidor da provedora (OpenAI, Groq, etc). O terminal usa WebVM (WebAssembly local). O extrator usa proxies públicos independentes.</p>
+
+<h3>Minha chave de API fica segura?</h3>
+<p>A chave é salva apenas no <code>localStorage</code> do seu navegador (no seu dispositivo). Ela nunca é enviada a nenhum servidor intermediário — vai direto da sua máquina para o servidor do provedor (OpenAI, Groq, etc).</p>
+
+<h3>O APK Builder gera o APK automaticamente?</h3>
+<p>O APK Builder gera o <em>projeto de código-fonte</em> em ZIP. Para gerar o arquivo <code>.apk</code> instalável, use o Android Studio (local) ou o GitHub Actions (automático na nuvem). O processo via GitHub Actions é mais simples — sem instalar nada.</p>
+
+<h3>Posso converter o Iara Suite em APK?</h3>
+<p>Sim! Na aba APK Builder, clique <strong>Demo (Iara Suite)</strong>. Isso carrega o próprio app com configuração <code>br.adv.maikoncaldeira.iarasuite</code> e orientação "Ambas". Gere o ZIP e compile normalmente.</p>
+
+<h3>O Terminal Linux funciona offline?</h3>
+<p>O WebVM roda Alpine Linux via WebAssembly. Ele precisa de conexão inicial para carregar (~10 MB), mas depois funciona parcialmente offline. Para acesso à internet dentro do VM, configure o Tailscale (opcional).</p>
+
+<h3>O Site Extractor não conseguiu acessar um site. O que fazer?</h3>
+<p>Sites com proteção Cloudflare podem bloquear proxies. Opções: (1) tente a URL sem <code>www</code>; (2) use a profundidade 1; (3) acesse o site manualmente no navegador e salve a página (<em>Ctrl+S</em>), depois extraia o HTML salvo.</p>
+
+<h3>Posso usar múltiplas IAs simultaneamente?</h3>
+<p>Configure os 4 slots com chaves diferentes. Apenas um slot pode estar ativo por vez. Para trocar, abra 🔑 Chaves API, ative outro slot e salve.</p>
+
+<hr class="divider"/>
+
+<!-- 10. CÁLCULOS -->
+<h2 id="juridico">10. Cálculos Jurídicos Integrados</h2>
+<p>O assistente Jasmim conhece os principais cálculos do direito previdenciário. Exemplos de perguntas:</p>
+
+<div class="grid2">
+  <div class="card">
+    <h4>Previdenciário</h4>
+    <ul>
+      <li>"Calcule o fator previdenciário para 35 anos de contribuição, 60 anos de idade"</li>
+      <li>"Gere tabela de contribuição INSS 2024"</li>
+      <li>"Calcule a RMC (Renda Mensal de Contribuição)"</li>
+      <li>"Aposentadoria programada — regra de transição EC 103/2019"</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>Cível / Trabalhista</h4>
+    <ul>
+      <li>"Calcule atualização monetária com IPCA de jan/2020 a dez/2024"</li>
+      <li>"Juros de mora 1% ao mês sobre R$ 50.000 por 24 meses"</li>
+      <li>"Gere calculadora de FGTS com 8% sobre salário"</li>
+      <li>"Calcule décimo terceiro proporcional"</li>
+    </ul>
+  </div>
+</div>
+
+<div class="alert a-tip">
+  <strong>💡 Prompt sugerido:</strong> "Sou o Dr. Maikon Caldeira, OAB/MG 183712. Preciso de uma calculadora HTML/CSS/JS completa para [descreva o cálculo]. Inclua validação de entrada, resultado formatado em R$ e explicação da fórmula utilizada."
+</div>
+
+<hr class="divider"/>
+
+<div style="text-align:center;padding:24px;color:var(--muted);font-size:12px">
+  <strong style="color:var(--primary)">⚡ Iara Suite v2.0</strong><br>
+  Desenvolvido para uso jurídico profissional<br>
+  Advogado Maikon Caldeira — OAB/MG 183712<br>
+  <br>
+  Sem dependências do servidor Replit · IA com rotas diretas · Terminal Linux gratuito
+</div>
+
+</div>
+</body>
+</html>
