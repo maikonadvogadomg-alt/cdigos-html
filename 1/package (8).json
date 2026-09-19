@@ -1,0 +1,16 @@
+{
+  "name": "meu-app",
+  "version": "1.0.0",
+  "description": "Aplicação jurídica",
+  "main": "index.js",
+  "author": "Seu Nome",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js",
+    "build": "pkg . --targets win",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {},
+  "bin": "index.js"
+}
