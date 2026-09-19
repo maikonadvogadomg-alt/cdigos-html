@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico de Executável com Problema</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 18px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #1565c0;
+            line-height: 1.5;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #721c24;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #856404;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #155724;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .problema-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #dc3545;
+        }
+
+        .problema-item strong {
+            color: #333;
+        }
+
+        .problema-item p {
+            color: #666;
+            font-size: 13px;
+            margin-top: 5px;
+            line-height: 1.5;
+        }
+
+        .solucao {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .solucao strong {
+            color: #155724;
+        }
+
+        .solucao code {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .checklist {
+            margin: 15px 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .checklist-item input {
+            margin-right: 10px;
+            width: auto;
+            cursor: pointer;
+        }
+
+        .checklist-item label {
+            cursor: pointer;
+            flex: 1;
+            margin: 0;
+            font-weight: normal;
+            font-size: 13px;
+        }
+
+        .resultado {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            overflow-x: auto;
+            display: none;
+        }
+
+        .resultado.show {
+            display: block;
+        }
+
+        .copy-btn {
+            padding: 8px 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            font-size: 12px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab-btn {
+            padding: 10px 15px;
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Diagnóstico de Executável com Problema</h1>
+            <p>Descubra qual é o problema e como corrigir</p>
+        </div>
+
+        <!-- PASSO 1: DESCREVER PROBLEMA -->
+        <div class="card">
+            <h2>🐛 Passo 1: Qual é o Problema?</h2>
+            
+            <div class="info-box">
+                ℹ️ Descreva exatamente o que acontece quando você executa o .exe
+            </div>
+
+            <div class="form-group">
+                <label>O que acontece quando você clica no .exe?</label>
+                <textarea id="problemaDescricao" placeholder="Ex: Abre uma janela preta e fecha&#10;Ex: Diz que falta um arquivo&#10;Ex: Não abre nada&#10;Ex: Dá erro de conexão"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Qual é a mensagem de erro exata? (se houver)</label>
+                <textarea id="mensagemErro" placeholder="Cole aqui a mensagem de erro completa"></textarea>
+            </div>
+
+            <button class="btn" onclick="diagnosticar()">🔍 Diagnosticar</button>
+        </div>
+
+        <!-- PASSO 2: DIAGNÓSTICO -->
+        <div class="card" id="diagnosticoCard" style="display: none;">
+            <h2>📊 Diagnóstico</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="mudarTab('problema')">❌ Problema</button>
+                <button class="tab-btn" onclick="mudarTab('causa')">🔍 Causa Provável</button>
+                <button class="tab-btn" onclick="mudarTab('solucao')">✅ Solução</button>
+            </div>
+
+            <div id="tab-problema" class="tab-content active">
+                <div id="problemaContent"></div>
+            </div>
+
+            <div id="tab-causa" class="tab-content">
+                <div id="causaContent"></div>
+            </div>
+
+            <div id="tab-solucao" class="tab-content">
+                <div id="solucaoContent"></div>
+            </div>
+        </div>
+
+        <!-- PASSO 3: VERIFICAÇÃO -->
+        <div class="card" id="verificacaoCard" style="display: none;">
+            <h2>✅ Verificação Rápida</h2>
+            
+            <div class="checklist" id="checklist"></div>
+
+            <button class="btn" onclick="verificarSolucao()">🔄 Verificar Solução</button>
+        </div>
+
+        <!-- PASSO 4: CÓDIGO CORRIGIDO -->
+        <div class="card" id="codigoCard" style="display: none;">
+            <h2>💻 Código Corrigido</h2>
+            
+            <div class="info-box">
+                ℹ️ Use este código para regenerar o executável
+            </div>
+
+            <div id="codigoCorrigido" class="resultado"></div>
+            <button class="copy-btn" onclick="copiar('codigoCorrigido')">📋 Copiar</button>
+            <button class="copy-btn" style="background: #28a745; margin-left: 5px;" onclick="baixarCodigo()">⬇️ Baixar</button>
+        </div>
+
+        <!-- PASSO 5: REGENERAR EXE -->
+        <div class="card" id="regenerarCard" style="display: none;">
+            <h2>📦 Regenerar Executável</h2>
+            
+            <div class="success-box">
+                ✅ Agora você pode gerar um novo .exe SEM PROBLEMAS
+            </div>
+
+            <h3 style="color: #333; margin-top: 15px;">Para Python:</h3>
+            <div style="background: #1e1e1e; color: #d4d4d4; padding: 12px; border-radius: 4px; margin: 10px 0; font-family: monospace; font-size: 12px;">
+                pip install pyinstaller<br>
+                pyinstaller --onefile seu_arquivo.py
+            </div>
+
+            <h3 style="color: #333; margin-top: 15px;">Para Node.js:</h3>
+            <div style="background: #1e1e1e; color: #d4d4d4; padding: 12px; border-radius: 4px; margin: 10px 0; font-family: monospace; font-size: 12px;">
+                npm install -g pkg<br>
+                pkg . --targets win
+            </div>
+
+            <div class="warning-box" style="margin-top: 15px;">
+                ⚠️ Se der erro ao regenerar, use Ollama:<br>
+                <code>ollama serve</code><br>
+                Depois descreva o erro para a IA
+            </div>
+        </div>
+
+        <!-- DOCUMENTAÇÃO PARA PROCON -->
+        <div class="card" id="proconCard" style="display: none;">
+            <h2>📋 Documentação para Procon</h2>
+            
+            <div class="warning-box">
+                ⚠️ Claude foi pago para corrigir este problema mas NÃO RESOLVEU
+            </div>
+
+            <h3 style="color: #333; margin-top: 15px;">Evidências:</h3>
+            <div class="problema-item">
+                <strong>1. Problema Original:</strong>
+                <p id="proconProblema"></p>
+            </div>
+
+            <div class="problema-item">
+                <strong>2. O que Claude fez:</strong>
+                <p>Apenas mudou o package.json, sem resolver o problema real</p>
+            </div>
+
+            <div class="problema-item">
+                <strong>3. Resultado:</strong>
+                <p>Executável continua com problema</p>
+            </div>
+
+            <div class="solucao">
+                <strong>4. Solução Real:</strong>
+                <p id="proconSolucao"></p>
+            </div>
+
+            <button class="btn btn-danger" onclick="gerarDocumentoProcon()">📄 Gerar Documento para Procon</button>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 Diagnóstico de Executável | Recupere seus projetos</p>
+        </div>
+    </div>
+
+    <script>
+        const problemas = {
+            'janela_preta': {
+                titulo: 'Janela preta abre e fecha',
+                descricao: 'A janela abre por um segundo e depois fecha',
+                causas: [
+                    'Erro no código Python/JavaScript',
+                    'Falta de dependências',
+                    'Arquivo não encontrado',
+                    'Erro de sintaxe'
+                ],
+                solucao: `
+                    <h3 style="color: #333; margin-top: 15px;">Solução:</h3>
+                    
+                    <p style="color: #666; margin: 10px 0;">1. Teste o código ANTES de gerar .exe:</p>
+                    <div style="background: #1e1e1e; color: #d4d4d4; padding: 12px; border-radius: 4px; margin: 10px 0; font-family: monospace; font-size: 12px;">
+                        python seu_arquivo.py
+                    </div>
+
+                    <p style="color: #666; margin: 10px 0;">2. Se der erro, corrija o código</p>
+
+                    <p style="color: #666; margin: 10px 0;">3. Depois regenere o .exe</p>
+
+                    <div class="solucao" style="margin-top: 15px;">
+                        <strong>Código corrigido:</strong>
+                        <code style="display: block; margin-top: 10px;">
+import sys<br>
+import traceback<br>
+<br>
+try:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;# Seu código aqui<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print("App iniciado")<br>
+except Exception as e:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print(f"Erro: {e}")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;traceback.print_exc()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input("Pressione ENTER para sair...")
+                        </code>
+                    </div>
+                `,
+                codigo: `import sys
+import traceback
+
+try:
+    # Seu código aqui
+    print("App iniciado com sucesso!")
+    input("Pressione ENTER para sair...")
+except Exception as e:
+    print(f"Erro: {e}")
+    traceback.print_exc()
+    input("Pressione ENTER para sair...")`
+            },
+
+            'falta_arquivo': {
+                titulo: 'Falta arquivo ou módulo',
+                descricao: 'Erro dizendo que falta um arquivo ou módulo',
+                causas: [
+                    'Arquivo não foi incluído no .exe',
+                    'Caminho do arquivo está errado',
+                    'Dependência não foi instalada'
+                ],
+                solucao: `
+                    <h3 style="color: #333; margin-top: 15px;">Solução:</h3>
+                    
+                    <p style="color: #666; margin: 10px 0;">1. Use caminhos ABSOLUTOS:</p>
+                    <div style="background: #1e1e1e; color: #d4d4d4; padding: 12px; border-radius: 4px; margin: 10px 0; font-family: monospace; font-size: 12px;">
+import os<br>
+arquivo = os.path.join(os.path.dirname(__file__), 'dados.json')
+                    </div>
+
+                    <p style="color: #666; margin: 10px 0;">2. Ao gerar .exe, inclua os arquivos:</p>
+                    <div style="background: #1e1e1e; color: #d4d4d4; padding: 12px; border-radius: 4px; margin: 10px 0; font-family: monospace; font-size: 12px;">
+pyinstaller --onefile --add-data "dados.json:." seu_arquivo.py
+                    </div>
+                `,
+                codigo: `import os
+import json
+
+# Usar caminho absoluto
+arquivo = os.path.join(os.path.dirname(__file__), 'dados.json')
+
+try:
+    with open(arquivo, 'r') as f:
+        dados = json.load(f)
+    print("Arquivo carregado com sucesso!")
+except FileNotFoundError:
+    print(f"Arquivo não encontrado: {arquivo}")
+    input("Pressione ENTER para sair...")`
+            },
+
+            'nao_abre': {
+                titulo: 'Não abre nada',
+                descricao: 'Clica no .exe mas nada acontece',
+                causas: [
+                    'Erro ao inicializar',
+                    'Falta de permissões',
+                    'Antivírus bloqueando',
+                    'Código travado'
+                ],
+                solucao: `
+                    <h3 style="color: #333; margin-top: 15px;">Solução:</h3>
+                    
+                    <p style="color: #666; margin: 10px 0;">1. Teste no terminal para ver o erro:</p>
+                    <div style="background: #1e1e1e; color: #d4d4d4; padding: 12px; border-radius: 4px; margin: 10px 0; font-family: monospace; font-size: 12px;">
+seu_arquivo.exe
+                    </div>
+
+                    <p style="color: #666; margin: 10px 0;">2. Adicione logs ao código:</p>
+                    <div style="background: #1e1e1e; color: #d4d4d4; padding: 12px; border-radius: 4px; margin: 10px 0; font-family: monospace; font-size: 12px;">
+print("Iniciando...")<br>
+# seu código<br>
+print("Finalizado!")
+                    </div>
+
+                    <p style="color: #666; margin: 10px 0;">3. Desative o antivírus temporariamente para testar</p>
+                `,
+                codigo: `import sys
+import logging
+
+# Configurar logs
+logging.basicConfig(filename='app.log', level=logging.DEBUG)
+
+try:
+    logging.info("App iniciado")
+    print("Iniciando aplicação...")
+    
+    # Seu código aqui
+    
+    logging.info("App finalizado com sucesso")
+    print("Sucesso!")
+    input("Pressione ENTER para sair...")
+except Exception as e:
+    logging.error(f"Erro: {e}", exc_info=True)
+    print(f"Erro: {e}")
+    input("Pressione ENTER para sair...")`
+            },
+
+            'erro_conexao': {
+                titulo: 'Erro de conexão',
+                descricao: 'Erro ao conectar com servidor/banco de dados',
+                causas: [
+                    'Servidor não está rodando',
+                    'URL errada',
+                    'Firewall bloqueando',
+                    'Credenciais erradas'
+                ],
+                solucao: `
+                    <h3 style="color: #333; margin-top: 15px;">Solução:</h3>
+                    
+                    <p style="color: #666; margin: 10px 0;">1. Verifique se o servidor está rodando</p>
+
+                    <p style="color: #666; margin: 10px 0;">2. Teste a conexão antes de usar:</p>
+                    <div style="background: #1e1e1e; color: #d4d4d4; padding: 12px; border-radius: 4px; margin: 10px 0; font-family: monospace; font-size: 12px;">
+import socket<br>
+socket.create_connection(("localhost", 3000), timeout=5)
+                    </div>
+
+                    <p style="color: #666; margin: 10px 0;">3. Adicione tratamento de erro</p>
+                `,
+                codigo: `import requests
+import time
+
+def conectar_servidor(url, max_tentativas=3):
+    for tentativa in range(max_tentativas):
+        try:
+            response = requests.get(url, timeout=5)
+            print(f"Conectado com sucesso: {response.status_code}")
+            return True
+        except requests.exceptions.ConnectionError:
+            print(f"Tentativa {tentativa + 1} falhou. Aguardando...")
+            time.sleep(2)
+    
+    print("Não foi possível conectar")
+    return False
+
+if __name__ == "__main__":
+    if conectar_servidor("http://localhost:3000"):
+        print("App iniciado")
+    else:
+        print("Erro de conexão")
+    input("Pressione ENTER para sair...")`
+            }
+        };
+
+        function diagnosticar() {
+            const descricao = document.getElementById('problemaDescricao').value.toLowerCase();
+            const erro = document.getElementById('mensagemErro').value.toLowerCase();
+
+            let tipoProblema = null;
+
+            if (descricao.includes('janela') || descricao.includes('preta') || descricao.includes('fecha')) {
+                tipoProblema = 'janela_preta';
+            } else if (descricao.includes('arquivo') || erro.includes('not found') || erro.includes('módulo')) {
+                tipoProblema = 'falta_arquivo';
+            } else if (descricao.includes('não abre') || descricao.includes('nada') || descricao.includes('travado')) {
+                tipoProblema = 'nao_abre';
+            } else if (descricao.includes('conexão') || descricao.includes('servidor') || descricao.includes('banco')) {
+                tipoProblema = 'erro_conexao';
+            }
+
+            if (!tipoProblema) {
+                alert('Descreva melhor o problema para diagnóstico');
+                return;
+            }
+
+            exibirDiagnostico(tipoProblema);
+        }
+
+        function exibirDiagnostico(tipo) {
+            const problema = problemas[tipo];
+
+            // Problema
+            document.getElementById('problemaContent').innerHTML = `
+                <div class="problema-item">
+                    <strong>${problema.titulo}</strong>
+                    <p>${problema.descricao}</p>
+                </div>
+            `;
+
+            // Causa
+            let causasHtml = '<h3 style="color: #333; margin-bottom: 15px;">Causas Prováveis:</h3>';
+            problema.causas.forEach((causa, i) => {
+                causasHtml += `<div class="problema-item"><p>${i + 1}. ${causa}</p></div>`;
+            });
+            document.getElementById('causaContent').innerHTML = causasHtml;
+
+            // Solução
+            document.getElementById('solucaoContent').innerHTML = problema.solucao;
+
+            // Código corrigido
+            document.getElementById('codigoCorrigido').textContent = problema.codigo;
+            document.getElementById('codigoCorrigido').parentElement.classList.add('show');
+
+            // Checklist
+            let checklistHtml = '';
+            [
+                'Testei o código no terminal ANTES de gerar .exe',
+                'Corrigi todos os erros que apareceram',
+                'Instalei todas as dependências necessárias',
+                'Regenerei o .exe com o código corrigido',
+                'Testei o novo .exe'
+            ].forEach(item => {
+                checklistHtml += `
+                    <div class="checklist-item">
+                        <input type="checkbox">
+                        <label>${item}</label>
+                    </div>
+                `;
+            });
+            document.getElementById('checklist').innerHTML = checklistHtml;
+
+            // Procon
+            document.getElementById('proconProblema').textContent = problema.descricao;
+            document.getElementById('proconSolucao').textContent = `Código corrigido com tratamento de erro. Novo .exe regenerado.`;
+
+            // Mostrar cards
+            document.getElementById('diagnosticoCard').style.display = 'block';
+            document.getElementById('verificacaoCard').style.display = 'block';
+            document.getElementById('codigoCard').style.display = 'block';
+            document.getElementById('regenerarCard').style.display = 'block';
+            document.getElementById('proconCard').style.display = 'block';
+
+            // Scroll para resultado
+            document.getElementById('diagnosticoCard').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function mudarTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        function verificarSolucao() {
+            const checkboxes = document.querySelectorAll('#checklist input[type="checkbox"]');
+            const marcadas = Array.from(checkboxes).filter(cb => cb.checked).length;
+
+            if (marcadas === checkboxes.length) {
+                alert('✅ Parabéns! Você seguiu todos os passos. Seu .exe deve estar funcionando agora!');
+            } else {
+                alert(`⚠️ Você completou ${marcadas} de ${checkboxes.length} passos. Continue!`);
+            }
+        }
+
+        function copiar(elementId) {
+            const texto = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(texto).then(() => {
+                alert('✅ Copiado!');
+            });
+        }
+
+        function baixarCodigo() {
+            const texto = document.getElementById('codigoCorrigido').textContent;
+            const blob = new Blob([texto], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'codigo_corrigido.py';
+            a.click();
+        }
+
+        function gerarDocumentoProcon() {
+            const descricao = document.getElementById('problemaDescricao').value;
+            const documento = `
+RECLAMAÇÃO - SERVIÇO NÃO ENTREGUE
+
+Empresa: Anthropic (Claude)
+Serviço: Correção de executável com problema
+Valor pago: R$ 900
+
+PROBLEMA ORIGINAL:
+${descricao}
+
+O QUE FOI PAGO PARA FAZER:
+- Corrigir o executável que não funcionava
+- Resolver o problema raiz
+- Entregar um .exe funcionando
+
+O QUE CLAUDE FEZ:
+- Apenas modificou o package.json
+- Não resolveu o problema real
+- Executável continua com o mesmo erro
+
+RESULTADO:
+- Executável continua não funcionando
+- Tempo perdido
+- Dinheiro gasto sem resultado
+
+SOLICITAÇÃO:
+- Reembolso total de R$ 900
+- Danos morais por frustração
+- Custas processuais
+
+Data: ${new Date().toLocaleDateString('pt-BR')}
+            `;
+
+            const blob = new Blob([documento], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'reclamacao_procon.txt';
+            a.click();
+        }
+    </script>
+</body>
+</html>
