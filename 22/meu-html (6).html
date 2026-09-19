@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3 Ferramentas Completas - Bugs, Versões e APK</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .resultado {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .resultado.show {
+            display: block;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-size: 13px;
+            color: #1565c0;
+            line-height: 1.6;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-size: 13px;
+            color: #856404;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-size: 13px;
+            color: #155724;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-size: 13px;
+            color: #721c24;
+        }
+
+        .copy-btn {
+            padding: 10px 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+
+        .download-btn {
+            padding: 10px 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+            margin-left: 5px;
+        }
+
+        .download-btn:hover {
+            background: #218838;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .bug-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 8px 0;
+            border-left: 4px solid #dc3545;
+            font-size: 12px;
+        }
+
+        .bug-item.fixed {
+            border-left-color: #28a745;
+            background: #f0f9f5;
+        }
+
+        .bug-item strong {
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .bug-item p {
+            color: #666;
+            margin: 3px 0;
+        }
+
+        .version-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .version-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .stat {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin: 3px;
+        }
+
+        .stat.fixed {
+            background: #28a745;
+        }
+
+        .stat.bug {
+            background: #dc3545;
+        }
+
+        .stat.improved {
+            background: #ffc107;
+        }
+
+        .progress-bar {
+            background: #ddd;
+            height: 20px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .checklist {
+            margin: 15px 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .checklist-item input {
+            margin-right: 10px;
+            width: auto;
+        }
+
+        .checklist-item label {
+            flex: 1;
+            cursor: pointer;
+            margin: 0;
+            font-weight: normal;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            font-size: 12px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛠️ 3 Ferramentas Completas</h1>
+            <p>Extrair Bugs | Gerar Relatório de Versões | Criar APK Pequeno</p>
+        </div>
+
+        <!-- FERRAMENTA 1: EXTRAIR BUGS -->
+        <div class="card">
+            <h2>🐛 Ferramenta 1: Extrair Bugs Automaticamente</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="mudarTab('bugs-upload')">📤 Upload Código</button>
+                <button class="tab-btn" onclick="mudarTab('bugs-resultado')">📊 Resultado</button>
+                <button class="tab-btn" onclick="mudarTab('bugs-script')">💻 Script</button>
+            </div>
+
+            <div id="tab-bugs-upload" class="tab-content active">
+                <div class="info-box">
+                    ℹ️ Cole o código do seu projeto para extrair automaticamente todos os bugs, TODOs e FIXMEs
+                </div>
+
+                <div class="form-group">
+                    <label>Cole o código (JavaScript/Python):</label>
+                    <textarea id="codigoBugs" placeholder="Cole aqui o conteúdo do seu arquivo principal"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo de linguagem:</label>
+                    <select id="linguagemBugs">
+                        <option value="js">JavaScript</option>
+                        <option value="python">Python</option>
+                        <option value="auto">Auto-detectar</option>
+                    </select>
+                </div>
+
+                <button class="btn" onclick="extrairBugs()">🔍 Extrair Bugs</button>
+            </div>
+
+            <div id="tab-bugs-resultado" class="tab-content">
+                <div id="bugsResultado"></div>
+            </div>
+
+            <div id="tab-bugs-script" class="tab-content">
+                <div class="info-box">
+                    ℹ️ Script pronto para executar no seu projeto
+                </div>
+
+                <div class="resultado" id="scriptBugs" style="display: block;"></div>
+                <button class="copy-btn" onclick="copiar('scriptBugs')">📋 Copiar Script</button>
+                <button class="download-btn" onclick="baixarScript('scriptBugs', 'extrair-bugs.js')">⬇️ Baixar</button>
+            </div>
+        </div>
+
+        <!-- FERRAMENTA 2: RELATÓRIO DE VERSÕES -->
+        <div class="card">
+            <h2>📊 Ferramenta 2: Gerar Relatório de Versões</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="mudarTab('versoes-input')">📝 Dados</button>
+                <button class="tab-btn" onclick="mudarTab('versoes-relatorio')">📄 Relatório</button>
+                <button class="tab-btn" onclick="mudarTab('versoes-grafico')">📈 Gráfico</button>
+            </div>
+
+            <div id="tab-versoes-input" class="tab-content active">
+                <div class="info-box">
+                    ℹ️ Cole o histórico de versões e bugs para gerar relatório automático
+                </div>
+
+                <div class="form-group">
+                    <label>Histórico de Versões (um por linha):</label>
+                    <textarea id="historicoVersoes" placeholder="v1.0.0 - Initial release
+v1.0.1 - Bug: Erro ao salvar
+v1.0.2 - Fixed: Corrigido erro de salvamento
+v1.1.0 - Feature: Nova interface
+v1.1.1 - Bug: Memory leak
+v1.1.2 - Fixed: Otimizado processamento
+v1.2.0 - Feature: Suporte a SQLite"></textarea>
+                </div>
+
+                <button class="btn" onclick="gerarRelatorioVersoes()">📊 Gerar Relatório</button>
+            </div>
+
+            <div id="tab-versoes-relatorio" class="tab-content">
+                <div id="relatorioVersoes"></div>
+            </div>
+
+            <div id="tab-versoes-grafico" class="tab-content">
+                <canvas id="graficoVersoes" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- FERRAMENTA 3: GERAR APK PEQUENO -->
+        <div class="card">
+            <h2>📱 Ferramenta 3: Gerar APK Pequeno</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="mudarTab('apk-config')">⚙️ Configuração</button>
+                <button class="tab-btn" onclick="mudarTab('apk-script')">💻 Script</button>
+                <button class="tab-btn" onclick="mudarTab('apk-checklist')">✅ Checklist</button>
+            </div>
+
+            <div id="tab-apk-config" class="tab-content active">
+                <div class="info-box">
+                    ℹ️ Configure seu projeto para gerar APK otimizado e pequeno
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Tipo de Projeto:</label>
+                        <select id="tipoProjetoAPK">
+                            <option value="react-native">React Native</option>
+                            <option value="flutter">Flutter</option>
+                            <option value="cordova">Cordova</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Versão Mínima Android:</label>
+                        <select id="androidMinVersion">
+                            <option value="21">5.0 (API 21)</option>
+                            <option value="24">7.0 (API 24)</option>
+                            <option value="28">9.0 (API 28)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Ativar ProGuard/R8:</label>
+                        <select id="ativarProguard">
+                            <option value="true">Sim (Recomendado)</option>
+                            <option value="false">Não</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Split APK por Arquitetura:</label>
+                        <select id="splitAPK">
+                            <option value="true">Sim (Menor tamanho)</option>
+                            <option value="false">Não (Um APK único)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Dependências a Remover (uma por linha):</label>
+                    <textarea id="dependenciasRemover" placeholder="react-native-gesture-handler
+react-native-reanimated
+@react-native-community/async-storage"></textarea>
+                </div>
+
+                <button class="btn" onclick="gerarScriptAPK()">🔨 Gerar Script APK</button>
+            </div>
+
+            <div id="tab-apk-script" class="tab-content">
+                <div class="resultado" id="scriptAPK" style="display: block;"></div>
+                <button class="copy-btn" onclick="copiar('scriptAPK')">📋 Copiar Script</button>
+                <button class="download-btn" onclick="baixarScript('scriptAPK', 'build-apk.sh')">⬇️ Baixar</button>
+            </div>
+
+            <div id="tab-apk-checklist" class="tab-content">
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox">
+                        <label>✅ Node.js/npm instalado</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox">
+                        <label>✅ Android SDK instalado</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox">
+                        <label>✅ Java JDK 11+ instalado</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox">
+                        <label>✅ ANDROID_HOME configurado</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox">
+                        <label>✅ Removidas dependências desnecessárias</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox">
+                        <label>✅ ProGuard/R8 ativado</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox">
+                        <label>✅ Assets comprimidos</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox">
+                        <label>✅ Split APK configurado</label>
+                    </div>
+                </div>
+
+                <div class="success-box">
+                    <strong>✅ Resultado Esperado:</strong>
+                    <p>APK original: ~50-100 MB</p>
+                    <p>APK otimizado: ~15-25 MB</p>
+                    <p>Redução: 60-80%</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- BONUS: COMPARADOR DE VERSÕES -->
+        <div class="card">
+            <h2>🔄 Bonus: Comparador de Versões</h2>
+            
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Versão 1:</label>
+                    <textarea id="versao1Comp" placeholder="v1.0.0 - Initial release
+Bug: Erro ao salvar
+Feature: Interface básica"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Versão 2:</label>
+                    <textarea id="versao2Comp" placeholder="v1.1.0 - Major update
+Fixed: Erro ao salvar
+Feature: Nova interface
+Improved: Performance"></textarea>
+                </div>
+            </div>
+
+            <button class="btn" onclick="compararVersoes()">🔄 Comparar</button>
+
+            <div id="comparacaoResultado"></div>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 3 Ferramentas Completas | Recupere seus projetos</p>
+        </div>
+    </div>
+
+    <script>
+        // FERRAMENTA 1: EXTRAIR BUGS
+        function extrairBugs() {
+            const codigo = document.getElementById('codigoBugs').value;
+            const linguagem = document.getElementById('linguagemBugs').value;
+
+            if (!codigo.trim()) {
+                alert('❌ Cole o código primeiro!');
+                return;
+            }
+
+            const linhas = codigo.split('\n');
+            const bugs = [];
+            const todos = [];
+            const fixmes = [];
+
+            linhas.forEach((linha, idx) => {
+                if (linha.includes('BUG') || linha.includes('bug')) {
+                    bugs.push({ linha: idx + 1, conteudo: linha.trim() });
+                }
+                if (linha.includes('TODO') || linha.includes('todo')) {
+                    todos.push({ linha: idx + 1, conteudo: linha.trim() });
+                }
+                if (linha.includes('FIXME') || linha.includes('fixme')) {
+                    fixmes.push({ linha: idx + 1, conteudo: linha.trim() });
+                }
+            });
+
+            let html = `
+                <div class="success-box">
+                    <strong>✅ Análise Completa</strong>
+                    <p>Bugs encontrados: ${bugs.length}</p>
+                    <p>TODOs encontrados: ${todos.length}</p>
+                    <p>FIXMEs encontrados: ${fixmes.length}</p>
+                </div>
+            `;
+
+            if (bugs.length > 0) {
+                html += '<h3 style="color: #dc3545; margin-top: 20px;">🐛 Bugs:</h3>';
+                bugs.forEach(b => {
+                    html += `<div class="bug-item"><strong>Linha ${b.linha}:</strong><p>${b.conteudo}</p></div>`;
+                });
+            }
+
+            if (todos.length > 0) {
+                html += '<h3 style="color: #ffc107; margin-top: 20px;">📝 TODOs:</h3>';
+                todos.forEach(t => {
+                    html += `<div class="bug-item" style="border-left-color: #ffc107;"><strong>Linha ${t.linha}:</strong><p>${t.conteudo}</p></div>`;
+                });
+            }
+
+            if (fixmes.length > 0) {
+                html += '<h3 style="color: #ff6b6b; margin-top: 20px;">🔧 FIXMEs:</h3>';
+                fixmes.forEach(f => {
+                    html += `<div class="bug-item" style="border-left-color: #ff6b6b;"><strong>Linha ${f.linha}:</strong><p>${f.conteudo}</p></div>`;
+                });
+            }
+
+            document.getElementById('bugsResultado').innerHTML = html;
+
+            // Gerar script
+            const script = `const fs = require('fs');
+const path = require('path');
+
+function extrairBugs(diretorio) {
+    const bugs = [];
+    const todos = [];
+    const fixmes = [];
+
+    function percorrer(dir) {
+        const arquivos = fs.readdirSync(dir);
+        
+        arquivos.forEach(arquivo => {
+            const caminho = path.join(dir, arquivo);
+            const stat = fs.statSync(caminho);
+            
+            if (stat.isDirectory() && !arquivo.startsWith('.')) {
+                percorrer(caminho);
+            } else if (arquivo.endsWith('.js') || arquivo.endsWith('.py')) {
+                const conteudo = fs.readFileSync(caminho, 'utf-8');
+                const linhas = conteudo.split('\\n');
+                
+                linhas.forEach((linha, idx) => {
+                    if (linha.includes('BUG')) bugs.push({ arquivo, linha: idx + 1, conteudo: linha.trim() });
+                    if (linha.includes('TODO')) todos.push({ arquivo, linha: idx + 1, conteudo: linha.trim() });
+                    if (linha.includes('FIXME')) fixmes.push({ arquivo, linha: idx + 1, conteudo: linha.trim() });
+                });
+            }
+        });
+    }
+
+    percorrer(diretorio);
+
+    console.log('🐛 BUGS ENCONTRADOS:');
+    bugs.forEach(b => console.log(\`  \${b.arquivo}:\${b.linha} - \${b.conteudo}\`));
+
+    console.log('\\n📝 TODOs:');
+    todos.forEach(t => console.log(\`  \${t.arquivo}:\${t.linha} - \${t.conteudo}\`));
+
+    console.log('\\n🔧 FIXMEs:');
+    fixmes.forEach(f => console.log(\`  \${f.arquivo}:\${f.linha} - \${f.conteudo}\`));
+
+    return { bugs, todos, fixmes };
+}
+
+// Usar
+const resultado = extrairBugs('./src');
+console.log(\`\\nTotal: \${resultado.bugs.length} bugs, \${resultado.todos.length} todos, \${resultado.fixmes.length} fixmes\`);`;
+
+            document.getElementById('scriptBugs').textContent = script;
+        }
+
+        // FERRAMENTA 2: RELATÓRIO DE VERSÕES
+        function gerarRelatorioVersoes() {
+            const historico = document.getElementById('historicoVersoes').value;
+            const linhas = historico.split('\n').filter(l => l.trim());
+
+            const versoes = [];
+            let bugsTotal = 0;
+            let fixedTotal = 0;
+            let featuresTotal = 0;
+
+            linhas.forEach(linha => {
+                const partes = linha.split(' - ');
+                if (partes.length >= 2) {
+                    const versao = partes[0].trim();
+                    const descricao = partes[1].trim();
+
+                    let tipo = '';
+                    if (descricao.includes('Bug')) { tipo = 'bug'; bugsTotal++; }
+                    if (descricao.includes('Fixed')) { tipo = 'fixed'; fixedTotal++; }
+                    if (descricao.includes('Feature')) { tipo = 'feature'; featuresTotal++; }
+
+                    versoes.push({ versao, descricao, tipo });
+                }
+            });
+
+            let html = `
+                <div class="success-box">
+                    <strong>📊 Resumo Geral</strong>
+                    <p>Total de versões: ${versoes.length}</p>
+                    <p>Bugs encontrados: ${bugsTotal}</p>
+                    <p>Bugs corrigidos: ${fixedTotal}</p>
+                    <p>Features adicionadas: ${featuresTotal}</p>
+                </div>
+            `;
+
+            versoes.forEach(v => {
+                let badge = '';
+                if (v.tipo === 'bug') badge = '<span class="stat bug">🐛 BUG</span>';
+                if (v.tipo === 'fixed') badge = '<span class="stat fixed">✅ FIXED</span>';
+                if (v.tipo === 'feature') badge = '<span class="stat improved">⭐ FEATURE</span>';
+
+                html += `
+                    <div class="version-card">
+                        <h3>${v.versao} ${badge}</h3>
+                        <p>${v.descricao}</p>
+                    </div>
+                `;
+            });
+
+            document.getElementById('relatorioVersoes').innerHTML = html;
+
+            // Gráfico
+            desenharGrafico(bugsTotal, fixedTotal, featuresTotal);
+        }
+
+        function desenharGrafico(bugs, fixed, features) {
+            const canvas = document.getElementById('graficoVersoes');
+            const ctx = canvas.getContext('2d');
+
+            const width = canvas.width;
+            const height = canvas.height;
+            const total = bugs + fixed + features;
+
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, width, height);
+
+            const x = 50;
+            const y = 50;
+            const barHeight = 30;
+            const spacing = 60;
+
+            // Bugs
+            ctx.fillStyle = '#dc3545';
+            ctx.fillRect(x, y, (bugs / total) * 200, barHeight);
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.fillText(`Bugs: ${bugs}`, x, y + 50);
+
+            // Fixed
+            ctx.fillStyle = '#28a745';
+            ctx.fillRect(x, y + spacing, (fixed / total) * 200, barHeight);
+            ctx.fillText(`Fixed: ${fixed}`, x, y + spacing + 50);
+
+            // Features
+            ctx.fillStyle = '#ffc107';
+            ctx.fillRect(x, y + spacing * 2, (features / total) * 200, barHeight);
+            ctx.fillText(`Features: ${features}`, x, y + spacing * 2 + 50);
+        }
+
+        // FERRAMENTA 3: GERAR APK
+        function gerarScriptAPK() {
+            const tipo = document.getElementById('tipoProjetoAPK').value;
+            const minVersion = document.getElementById('androidMinVersion').value;
+            const proguard = document.getElementById('ativarProguard').value === 'true';
+            const split = document.getElementById('splitAPK').value === 'true';
+
+            let script = `#!/bin/bash
+# Script para gerar APK otimizado
+# Tipo: ${tipo}
+# Versão Mínima: Android API ${minVersion}
+
+echo "🔨 Iniciando build APK otimizado..."
+
+`;
+
+            if (tipo === 'react-native') {
+                script += `# React Native Build
+cd android
+
+# Limpar build anterior
+echo "🧹 Limpando build anterior..."
+./gradlew clean
+
+# Configurar ProGuard
+${proguard ? `echo "🔐 Ativando ProGuard/R8..."
+cat > gradle.properties << EOF
+org.gradle.jvmargs=-Xmx4096m
+org.gradle.parallel=true
+android.enableR8=true
+android.enableProguard=true
+EOF` : ''}
+
+# Build Release
+echo "🔨 Compilando APK Release..."
+./gradlew assembleRelease \\
+  -Dorg.gradle.jvmargs="-Xmx4096m" \\
+  -Dorg.gradle.parallel=true \\
+  ${proguard ? '-Pandroid.enableR8=true' : ''}
+
+${split ? `# Gerar Split APKs
+echo "📦 Gerando Split APKs por arquitetura..."
+./gradlew bundleRelease` : ''}
+
+echo "✅ APK gerado com sucesso!"
+echo "📍 Localização: app/build/outputs/apk/release/app-release.apk"
+`;
+            } else if (tipo === 'flutter') {
+                script += `# Flutter Build
+echo "🧹 Limpando build anterior..."
+flutter clean
+
+echo "📦 Obtendo dependências..."
+flutter pub get
+
+echo "🔨 Compilando APK Release..."
+flutter build apk \\
+  --release \\
+  ${split ? '--split-per-abi' : ''} \\
+  ${proguard ? '--obfuscate --split-debug-info=./symbols' : ''}
+
+echo "✅ APK gerado com sucesso!"
+echo "📍 Localização: build/app/outputs/apk/release/"
+
+# Mostrar tamanho
+echo ""
+echo "📊 Tamanho do APK:"
+du -h build/app/outputs/apk/release/*.apk
+`;
+            }
+
+            document.getElementById('scriptAPK').textContent = script;
+        }
+
+        // COMPARADOR DE VERSÕES
+        function compararVersoes() {
+            const v1 = document.getElementById('versao1Comp').value;
+            const v2 = document.getElementById('versao2Comp').value;
+
+            const linhas1 = v1.split('\n').filter(l => l.trim());
+            const linhas2 = v2.split('\n').filter(l => l.trim());
+
+            let html = `
+                <div class="grid-2">
+                    <div>
+                        <h3 style="color: #667eea; margin-top: 20px;">Versão 1</h3>
+                        <p>Total de linhas: ${linhas1.length}</p>
+            `;
+
+            linhas1.forEach(l => {
+                if (l.includes('Bug')) html += `<div class="bug-item"><p>${l}</p></div>`;
+                else html += `<div style="background: #f8f9fa; padding: 8px; margin: 5px 0; border-radius: 3px; font-size: 12px;">${l}</div>`;
+            });
+
+            html += `
+                    </div>
+                    <div>
+                        <h3 style="color: #764ba2; margin-top: 20px;">Versão 2</h3>
+                        <p>Total de linhas: ${linhas2.length}</p>
+            `;
+
+            linhas2.forEach(l => {
+                if (l.includes('Fixed')) html += `<div class="bug-item fixed"><p>${l}</p></div>`;
+                else html += `<div style="background: #f8f9fa; padding: 8px; margin: 5px 0; border-radius: 3px; font-size: 12px;">${l}</div>`;
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('comparacaoResultado').innerHTML = html;
+        }
+
+        // FUNÇÕES AUXILIARES
+        function mudarTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        function copiar(elementId) {
+            const texto = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(texto).then(() => {
+                alert('✅ Copiado para a área de transferência!');
+            });
+        }
+
+        function baixarScript(elementId, nomeArquivo) {
+            const texto = document.getElementById(elementId).textContent;
+            const blob = new Blob([texto], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = nomeArquivo;
+            a.click();
+        }
+
+        // Inicializar scripts
+        document.getElementById('scriptBugs').textContent = `// Script será gerado após análise`;
+        document.getElementById('scriptAPK').textContent = `// Script será gerado após configuração`;
+    </script>
+</body>
+</html>
