@@ -1,0 +1,32 @@
+{
+  "name": "monorepo-root",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Monorepo com múltiplos projetos",
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "build:all": "turbo run build --filter='./projects/*'",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "setup": "pnpm install && pnpm run build",
+    "restore-packages": "bash restore-packages.sh",
+    "protect-packages": "bash protect-packages.sh"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.0",
+    "typescript": "catalog:"
+  },
+  "pnpm": {
+    "overrides": {
+      "react": "catalog:",
+      "react-dom": "catalog:",
+      "typescript": "catalog:"
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
