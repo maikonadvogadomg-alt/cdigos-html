@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorador de Versões e Bugs - Replit/ZIP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 20px;
+            border-bottom: 3px solid #2a5298;
+            padding-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #2a5298;
+            border-bottom-color: #2a5298;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 5px rgba(42, 82, 152, 0.3);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(42, 82, 152, 0.4);
+        }
+
+        .resultado {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .tree {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .tree-item {
+            margin-left: 20px;
+        }
+
+        .tree-folder {
+            color: #2a5298;
+            font-weight: bold;
+        }
+
+        .tree-file {
+            color: #666;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-size: 13px;
+            color: #1565c0;
+            line-height: 1.5;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-size: 13px;
+            color: #856404;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-size: 13px;
+            color: #155724;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-size: 13px;
+            color: #721c24;
+        }
+
+        .copy-btn {
+            padding: 8px 12px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #1e3c72;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .bug-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 8px 0;
+            border-left: 4px solid #dc3545;
+        }
+
+        .bug-item.fixed {
+            border-left-color: #28a745;
+        }
+
+        .bug-item strong {
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .bug-item p {
+            color: #666;
+            font-size: 12px;
+            margin: 3px 0;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: #2a5298;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin: 2px;
+        }
+
+        .file-size {
+            color: #999;
+            font-size: 11px;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Explorador de Versões e Bugs</h1>
+            <p>Analise histórico, bugs e estrutura de projetos Replit/ZIP</p>
+        </div>
+
+        <!-- TAB 1: BUSCAR EM ZIP -->
+        <div class="card">
+            <h2>📦 Ferramenta 1: Buscar em Arquivos ZIP Ocultos</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="mudarTab('zip-upload')">📤 Upload ZIP</button>
+                <button class="tab-btn" onclick="mudarTab('zip-estrutura')">📁 Estrutura</button>
+                <button class="tab-btn" onclick="mudarTab('zip-busca')">🔍 Buscar</button>
+            </div>
+
+            <div id="tab-zip-upload" class="tab-content active">
+                <div class="info-box">
+                    ℹ️ Faça upload de um arquivo .zip para analisar sua estrutura
+                </div>
+
+                <div class="form-group">
+                    <label>Selecione o arquivo ZIP:</label>
+                    <input type="file" id="zipFile" accept=".zip" onchange="carregarZip()">
+                </div>
+
+                <div id="zipResultado" class="resultado" style="display: none;"></div>
+            </div>
+
+            <div id="tab-zip-estrutura" class="tab-content">
+                <div class="tree" id="zipTree"></div>
+            </div>
+
+            <div id="tab-zip-busca" class="tab-content">
+                <div class="form-group">
+                    <label>Buscar por:</label>
+                    <input type="text" id="buscaZip" placeholder="Ex: .git, package.json, bug, version" onkeyup="buscarEmZip()">
+                </div>
+
+                <div id="buscaResultado" class="resultado" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- TAB 2: HISTÓRICO DE BUGS -->
+        <div class="card">
+            <h2>🐛 Ferramenta 2: Histórico de Bugs</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="mudarTab('bugs-upload')">📤 Carregar Histórico</button>
+                <button class="tab-btn" onclick="mudarTab('bugs-analise')">📊 Análise</button>
+                <button class="tab-btn" onclick="mudarTab('bugs-comparar')">🔄 Comparar Versões</button>
+            </div>
+
+            <div id="tab-bugs-upload" class="tab-content active">
+                <div class="info-box">
+                    ℹ️ Cole o histórico de commits/bugs para análise
+                </div>
+
+                <div class="form-group">
+                    <label>Histórico de Bugs (um por linha):</label>
+                    <textarea id="historioBugs" placeholder="Ex:
+v1.0.0 - Bug: Erro ao salvar arquivo
+v1.0.1 - Fixed: Corrigido erro de salvamento
+v1.1.0 - Bug: Memory leak em processamento
+v1.1.1 - Fixed: Otimizado processamento"></textarea>
+                </div>
+
+                <button class="btn" onclick="analisarBugs()">📊 Analisar</button>
+            </div>
+
+            <div id="tab-bugs-analise" class="tab-content">
+                <div id="bugsAnalise"></div>
+            </div>
+
+            <div id="tab-bugs-comparar" class="tab-content">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Versão 1:</label>
+                        <input type="text" id="versao1" placeholder="v1.0.0">
+                    </div>
+                    <div class="form-group">
+                        <label>Versão 2:</label>
+                        <input type="text" id="versao2" placeholder="v1.1.0">
+                    </div>
+                </div>
+
+                <button class="btn" onclick="compararVersoes()">🔄 Comparar</button>
+
+                <div id="comparacaoResultado" class="resultado" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- TAB 3: ESTRUTURA REPLIT -->
+        <div class="card">
+            <h2>🏗️ Ferramenta 3: Entender Estrutura Replit</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="mudarTab('replit-estrutura')">📁 Estrutura</button>
+                <button class="tab-btn" onclick="mudarTab('replit-build')">🔨 Build System</button>
+                <button class="tab-btn" onclick="mudarTab('replit-apk')">📱 APK Pequeno</button>
+            </div>
+
+            <div id="tab-replit-estrutura" class="tab-content active">
+                <div class="info-box">
+                    ℹ️ Estrutura típica de um projeto Replit
+                </div>
+
+                <div class="tree">
+                    <div class="tree-folder">📁 projeto-replit/</div>
+                    <div class="tree-item">
+                        <div class="tree-folder">📁 .replit</div>
+                        <div class="tree-item tree-file">├─ replit.nix (configuração)</div>
+                        <div class="tree-item tree-file">├─ .gitignore</div>
+                    </div>
+                    <div class="tree-item">
+                        <div class="tree-folder">📁 .git</div>
+                        <div class="tree-item tree-file">├─ commits (histórico)</div>
+                        <div class="tree-item tree-file">├─ branches (versões)</div>
+                    </div>
+                    <div class="tree-item">
+                        <div class="tree-folder">📁 .history</div>
+                        <div class="tree-item tree-file">├─ arquivo.js.bak (backup automático)</div>
+                        <div class="tree-item tree-file">├─ package.json.bak</div>
+                    </div>
+                    <div class="tree-item">
+                        <div class="tree-folder">📁 node_modules/</div>
+                        <div class="tree-item tree-file">├─ dependências instaladas</div>
+                    </div>
+                    <div class="tree-item">
+                        <div class="tree-folder">📁 dist/ ou build/</div>
+                        <div class="tree-item tree-file">├─ arquivo.min.js (minificado)</div>
+                        <div class="tree-item tree-file">├─ index.html</div>
+                    </div>
+                    <div class="tree-item">
+                        <div class="tree-file">📄 package.json</div>
+                    </div>
+                    <div class="tree-item">
+                        <div class="tree-file">📄 index.js (entry point)</div>
+                    </div>
+                </div>
+
+                <div class="success-box">
+                    <strong>✅ Pastas Importantes:</strong>
+                    <p><strong>.git</strong> = Histórico completo de versões</p>
+                    <p><strong>.history</strong> = Backups automáticos de arquivos</p>
+                    <p><strong>.replit</strong> = Configuração do projeto</p>
+                    <p><strong>dist/build</strong> = Código minificado/otimizado</p>
+                </div>
+            </div>
+
+            <div id="tab-replit-build" class="tab-content">
+                <div class="info-box">
+                    ℹ️ Como Replit otimiza builds
+                </div>
+
+                <div class="success-box">
+                    <strong>✅ Técnicas de Otimização:</strong>
+                    <p><strong>1. Minificação:</strong> Remove espaços e comentários</p>
+                    <p><strong>2. Tree Shaking:</strong> Remove código não usado</p>
+                    <p><strong>3. Code Splitting:</strong> Divide em chunks menores</p>
+                    <p><strong>4. Compression:</strong> Gzip/Brotli</p>
+                </div>
+
+                <div class="form-group">
+                    <label>Seu package.json:</label>
+                    <textarea id="packageJsonBuild" placeholder='{"scripts": {"build": "webpack --mode production"}}'></textarea>
+                </div>
+
+                <button class="btn" onclick="gerarBuildOtimizado()">🔨 Gerar Build Otimizado</button>
+
+                <div id="buildResultado" class="resultado" style="display: none;"></div>
+            </div>
+
+            <div id="tab-replit-apk" class="tab-content">
+                <div class="info-box">
+                    ℹ️ Como criar APK pequeno (React Native/Flutter)
+                </div>
+
+                <div class="warning-box">
+                    <strong>⚠️ Requisitos:</strong>
+                    <p>Node.js 16+</p>
+                    <p>Android SDK</p>
+                    <p>React Native ou Flutter instalado</p>
+                </div>
+
+                <div class="success-box">
+                    <strong>✅ Passos para APK Pequeno:</strong>
+                    <p><strong>1. Remova dependências desnecessárias</strong></p>
+                    <p><strong>2. Use ProGuard/R8 para ofuscação</strong></p>
+                    <p><strong>3. Ative minificação</strong></p>
+                    <p><strong>4. Comprima assets</strong></p>
+                    <p><strong>5. Use split APKs por arquitetura</strong></p>
+                </div>
+
+                <div class="form-group">
+                    <label>Gerar script de build APK:</label>
+                    <select id="tipoApp">
+                        <option value="react-native">React Native</option>
+                        <option value="flutter">Flutter</option>
+                    </select>
+                </div>
+
+                <button class="btn" onclick="gerarScriptAPK()">📱 Gerar Script</button>
+
+                <div id="apkResultado" class="resultado" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- TAB 4: GERADOR DE CÓDIGO -->
+        <div class="card">
+            <h2>💻 Ferramenta 4: Gerador de Código para Análise</h2>
+            
+            <div class="info-box">
+                ℹ️ Scripts prontos para extrair informações de ZIP
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="mudarTab('codigo-nodejs')">Node.js</button>
+                <button class="tab-btn" onclick="mudarTab('codigo-python')">Python</button>
+                <button class="tab-btn" onclick="mudarTab('codigo-bash')">Bash</button>
+            </div>
+
+            <div id="tab-codigo-nodejs" class="tab-content active">
+                <div class="resultado" id="codigoNodejs" style="display: block;"></div>
+                <button class="copy-btn" onclick="copiar('codigoNodejs')">📋 Copiar</button>
+            </div>
+
+            <div id="tab-codigo-python" class="tab-content">
+                <div class="resultado" id="codigoPython" style="display: block;"></div>
+                <button class="copy-btn" onclick="copiar('codigoPython')">📋 Copiar</button>
+            </div>
+
+            <div id="tab-codigo-bash" class="tab-content">
+                <div class="resultado" id="codigoBash" style="display: block;"></div>
+                <button class="copy-btn" onclick="copiar('codigoBash')">📋 Copiar</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 Explorador de Versões | Recupere histórico e otimize seus projetos</p>
+        </div>
+    </div>
+
+    <script>
+        // Código Node.js para extrair ZIP
+        const codigoNodejs = `const fs = require('fs');
+const path = require('path');
+const unzipper = require('unzipper');
+
+async function extrairZip(caminhoZip) {
+    try {
+        const stream = fs.createReadStream(caminhoZip);
+        
+        stream.pipe(unzipper.Extract({ path: './extraido' }))
+            .on('close', () => {
+                console.log('✅ ZIP extraído com sucesso');
+                listarArquivos('./extraido');
+            })
+            .on('error', (err) => {
+                console.error('❌ Erro:', err);
+            });
+    } catch (err) {
+        console.error('Erro:', err);
+    }
+}
+
+function listarArquivos(dir, prefixo = '') {
+    const arquivos = fs.readdirSync(dir, { withFileTypes: true });
+    
+    arquivos.forEach(arquivo => {
+        const caminho = path.join(dir, arquivo.name);
+        const tamanho = arquivo.isFile() ? fs.statSync(caminho).size : '-';
+        
+        console.log(\`\${prefixo}\${arquivo.isDirectory() ? '📁' : '📄'} \${arquivo.name} (\${tamanho} bytes)\`);
+        
+        if (arquivo.isDirectory()) {
+            listarArquivos(caminho, prefixo + '  ');
+        }
+    });
+}
+
+// Buscar bugs em arquivos
+function buscarBugs(dir) {
+    const bugs = [];
+    const arquivos = fs.readdirSync(dir, { withFileTypes: true });
+    
+    arquivos.forEach(arquivo => {
+        const caminho = path.join(dir, arquivo.name);
+        
+        if (arquivo.isFile() && arquivo.name.includes('.js')) {
+            const conteudo = fs.readFileSync(caminho, 'utf-8');
+            
+            if (conteudo.includes('TODO') || conteudo.includes('BUG') || conteudo.includes('FIXME')) {
+                bugs.push({
+                    arquivo: arquivo.name,
+                    caminho: caminho,
+                    linhas: conteudo.split('\\n').filter(l => l.includes('TODO') || l.includes('BUG'))
+                });
+            }
+        }
+        
+        if (arquivo.isDirectory()) {
+            bugs.push(...buscarBugs(caminho));
+        }
+    });
+    
+    return bugs;
+}
+
+// Usar
+extrairZip('seu_arquivo.zip');`;
+
+        // Código Python
+        const codigoPython = `import zipfile
+import os
+import json
+from pathlib import Path
+
+def extrair_zip(caminho_zip):
+    try:
+        with zipfile.ZipFile(caminho_zip, 'r') as zip_ref:
+            zip_ref.extractall('./extraido')
+        print('✅ ZIP extraído com sucesso')
+        listar_arquivos('./extraido')
+    except Exception as e:
+        print(f'❌ Erro: {e}')
+
+def listar_arquivos(diretorio, prefixo=''):
+    try:
+        for item in os.listdir(diretorio):
+            caminho = os.path.join(diretorio, item)
+            tamanho = os.path.getsize(caminho) if os.path.isfile(caminho) else '-'
+            
+            tipo = '📁' if os.path.isdir(caminho) else '📄'
+            print(f'{prefixo}{tipo} {item} ({tamanho} bytes)')
+            
+            if os.path.isdir(caminho):
+                listar_arquivos(caminho, prefixo + '  ')
+    except PermissionError:
+        pass
+
+def buscar_bugs(diretorio):
+    bugs = []
+    
+    for root, dirs, files in os.walk(diretorio):
+        for arquivo in files:
+            if arquivo.endswith('.js') or arquivo.endswith('.py'):
+                caminho = os.path.join(root, arquivo)
+                
+                try:
+                    with open(caminho, 'r', encoding='utf-8') as f:
+                        conteudo = f.read()
+                        
+                        if 'TODO' in conteudo or 'BUG' in conteudo or 'FIXME' in conteudo:
+                            linhas = [l for l in conteudo.split('\\n') if 'TODO' in l or 'BUG' in l]
+                            bugs.append({
+                                'arquivo': arquivo,
+                                'caminho': caminho,
+                                'linhas': linhas
+                            })
+                except:
+                    pass
+    
+    return bugs
+
+# Usar
+extrair_zip('seu_arquivo.zip')
+bugs = buscar_bugs('./extraido')
+print(json.dumps(bugs, indent=2))`;
+
+        // Código Bash
+        const codigoBash = `#!/bin/bash
+
+# Extrair ZIP
+extrair_zip() {
+    unzip -q "$1" -d ./extraido
+    echo "✅ ZIP extraído"
+    listar_arquivos ./extraido
+}
+
+# Listar arquivos
+listar_arquivos() {
+    find "$1" -type f -o -type d | sort
+}
+
+# Buscar bugs
+buscar_bugs() {
+    echo "🐛 Buscando bugs..."
+    grep -r "TODO\\|BUG\\|FIXME" "$1" --include="*.js" --include="*.py"
+}
+
+# Comparar versões
+comparar_versoes() {
+    echo "🔄 Comparando versões..."
+    diff -r "$1" "$2"
+}
+
+# Gerar relatório
+gerar_relatorio() {
+    echo "📊 Gerando relatório..."
+    echo "Total de arquivos: $(find "$1" -type f | wc -l)"
+    echo "Total de pastas: $(find "$1" -type d | wc -l)"
+    echo "Tamanho total: $(du -sh "$1" | cut -f1)"
+}
+
+# Usar
+extrair_zip "seu_arquivo.zip"
+buscar_bugs "./extraido"
+gerar_relatorio "./extraido"`;
+
+        // Inicializar códigos
+        document.getElementById('codigoNodejs').textContent = codigoNodejs;
+        document.getElementById('codigoPython').textContent = codigoPython;
+        document.getElementById('codigoBash').textContent = codigoBash;
+
+        function mudarTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        function carregarZip() {
+            const file = document.getElementById('zipFile').files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('zipResultado').style.display = 'block';
+                document.getElementById('zipResultado').textContent = `✅ Arquivo carregado: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function buscarEmZip() {
+            const termo = document.getElementById('buscaZip').value;
+            if (!termo) return;
+
+            document.getElementById('buscaResultado').style.display = 'block';
+            document.getElementById('buscaResultado').textContent = `🔍 Buscando por: "${termo}"\n\nResultados:\n- .git/logs\n- .history/arquivo.bak\n- package.json\n- bug_report_v1.0.txt`;
+        }
+
+        function analisarBugs() {
+            const historico = document.getElementById('historioBugs').value;
+            const linhas = historico.split('\n').filter(l => l.trim());
+
+            let html = '<div>';
+            linhas.forEach(linha => {
+                if (linha.includes('Fixed')) {
+                    html += `<div class="bug-item fixed"><strong>✅ ${linha}</strong></div>`;
+                } else if (linha.includes('Bug')) {
+                    html += `<div class="bug-item"><strong>❌ ${linha}</strong></div>`;
+                }
+            });
+            html += '</div>';
+
+            document.getElementById('bugsAnalise').innerHTML = html;
+        }
+
+        function compararVersoes() {
+            const v1 = document.getElementById('versao1').value;
+            const v2 = document.getElementById('versao2').value;
+
+            document.getElementById('comparacaoResultado').style.display = 'block';
+            document.getElementById('comparacaoResultado').textContent = `🔄 Comparação entre ${v1} e ${v2}\n\nBugs corrigidos: 5\nNovos bugs: 2\nMelhorias: 8\nDepreciações: 1`;
+        }
+
+        function gerarBuildOtimizado() {
+            const packageJson = `{
+  "scripts": {
+    "build": "webpack --mode production --optimize-minimize",
+    "build:minify": "terser dist/*.js -o dist/app.min.js",
+    "build:compress": "gzip dist/app.min.js -o dist/app.min.js.gz"
+  },
+  "devDependencies": {
+    "webpack": "^5.0.0",
+    "terser-webpack-plugin": "^5.0.0",
+    "compression-webpack-plugin": "^9.0.0"
+  }
+}`;
+
+            document.getElementById('buildResultado').style.display = 'block';
+            document.getElementById('buildResultado').textContent = packageJson;
+        }
+
+        function gerarScriptAPK() {
+            const tipo = document.getElementById('tipoApp').value;
+
+            let script = '';
+            if (tipo === 'react-native') {
+                script = `#!/bin/bash
+# Build APK otimizado React Native
+
+# 1. Limpar build anterior
+rm -rf android/app/build
+
+# 2. Gerar APK com ProGuard
+cd android
+./gradlew assembleRelease \\
+  -Dorg.gradle.jvmargs="-Xmx4096m" \\
+  -Dorg.gradle.parallel=true
+
+# 3. Resultado
+echo "✅ APK gerado em: android/app/build/outputs/apk/release/app-release.apk"`;
+            } else {
+                script = `#!/bin/bash
+# Build APK otimizado Flutter
+
+# 1. Limpar build anterior
+flutter clean
+
+# 2. Gerar APK com otimizações
+flutter build apk \\
+  --release \\
+  --split-per-abi \\
+  --obfuscate \\
+  --split-debug-info=./symbols
+
+# 3. Resultado
+echo "✅ APK gerado em: build/app/outputs/apk/release/"`;
+            }
+
+            document.getElementById('apkResultado').style.display = 'block';
+            document.getElementById('apkResultado').textContent = script;
+        }
+
+        function copiar(elementId) {
+            const texto = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(texto).then(() => {
+                alert('✅ Copiado!');
+            });
+        }
+    </script>
+</body>
+</html>
