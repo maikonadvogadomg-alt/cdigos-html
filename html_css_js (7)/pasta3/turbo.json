@@ -1,0 +1,28 @@
+{
+  "extends": [
+    "//"
+  ],
+  "globalDependencies": [
+    "**/.env.local",
+    "**/.env"
+  ],
+  "pipeline": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        "dist-apk/**",
+        "dist-desktop/**"
+      ]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "typecheck": {
+      "outputs": []
+    }
+  }
+}
