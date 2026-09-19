@@ -1,0 +1,24 @@
+{
+    "name": "meu-app-juridico",
+      "version": "1.0.0",
+        "type": "module",
+          "scripts": {
+              "dev": "node ./src/index.js",
+                  "build": "node ./build.mjs",
+                      "start": "node ./dist/index.mjs"
+                        },
+                          "dependencies": {
+                              "express": "^5",
+                                  "cors": "^2",
+                                      "cookie-parser": "^1.4.7",
+                                          "pino": "^9",
+                                              "pino-http": "^10",
+                                                  "ws": "^8.20.0"
+                                                    },
+                                                      "devDependencies": {
+                                                          "esbuild": "^0.27.3",
+                                                              "esbuild-plugin-pino": "^2.3.3"
+                                                                }
+                                                                }
+                                                                
+}
